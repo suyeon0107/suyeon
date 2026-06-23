@@ -27,38 +27,33 @@ export default function Header() {
         {/* 데스크탑 네비게이션 바 공간 */}
         <nav className="hidden md:flex items-center gap-8">
           <Link 
-            href="#" 
+            href="/" 
+            className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors duration-200"
+          >
+            조선 역사 퀴즈
+          </Link>
+          <Link 
+            href="/" 
             className="text-sm font-medium text-zinc-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-indigo-400 transition-colors duration-200"
           >
             소개
           </Link>
           <Link 
-            href="#" 
-            className="text-sm font-medium text-zinc-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-indigo-400 transition-colors duration-200"
-          >
-            학습 도구
-          </Link>
-          <Link 
-            href="#" 
+            href="/" 
             className="text-sm font-medium text-zinc-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-indigo-400 transition-colors duration-200"
           >
             워크숍
           </Link>
-          <Link 
-            href="#" 
-            className="text-sm font-medium text-zinc-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-indigo-400 transition-colors duration-200"
-          >
-            소식
-          </Link>
-          
-          {/*기에 새로운 네비게이션 링크를 추가할 수 있습니다. */}
         </nav>
 
         {/* 우측 유틸리티 버튼 */}
         <div className="hidden md:flex items-center gap-4">
-          <button className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 shadow-sm transition-all duration-200 hover:-translate-y-[1px]">
+          <Link 
+            href="/"
+            className="rounded-full bg-zinc-900 px-5 py-2 text-sm font-semibold text-white hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 shadow-sm transition-all duration-200 hover:-translate-y-[1px]"
+          >
             시작하기
-          </button>
+          </Link>
         </div>
 
         {/* 모바일 햄버거 메뉴 버튼 */}
@@ -89,34 +84,30 @@ export default function Header() {
         <div className="md:hidden border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 transition-all duration-300 ease-in-out" id="mobile-menu">
           <div className="space-y-1 px-4 pb-4 pt-2">
             <Link
-              href="#"
+              href="/"
+              className="block rounded-md px-3 py-2 text-base font-bold text-indigo-600 dark:text-indigo-400 hover:bg-zinc-50 dark:hover:bg-zinc-900"
+            >
+              조선 역사 퀴즈
+            </Link>
+            <Link
+              href="/"
               className="block rounded-md px-3 py-2 text-base font-medium text-zinc-700 hover:bg-zinc-50 hover:text-indigo-600 dark:text-zinc-300 dark:hover:bg-zinc-900 dark:hover:text-indigo-400"
             >
               소개
             </Link>
             <Link
-              href="#"
-              className="block rounded-md px-3 py-2 text-base font-medium text-zinc-700 hover:bg-zinc-50 hover:text-indigo-600 dark:text-zinc-300 dark:hover:bg-zinc-900 dark:hover:text-indigo-400"
-            >
-              학습 도구
-            </Link>
-            <Link
-              href="#"
+              href="/"
               className="block rounded-md px-3 py-2 text-base font-medium text-zinc-700 hover:bg-zinc-50 hover:text-indigo-600 dark:text-zinc-300 dark:hover:bg-zinc-900 dark:hover:text-indigo-400"
             >
               워크숍
             </Link>
-            <Link
-              href="#"
-              className="block rounded-md px-3 py-2 text-base font-medium text-zinc-700 hover:bg-zinc-50 hover:text-indigo-600 dark:text-zinc-300 dark:hover:bg-zinc-900 dark:hover:text-indigo-400"
-            >
-              소식
-            </Link>
-            {/*여기에 모바일용 새로운 링크를 추가할 수 있습니다. */}
             <div className="pt-4">
-              <button className="w-full rounded-full bg-indigo-600 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500 shadow-sm transition-all duration-200">
+              <Link 
+                href="/"
+                className="block w-full rounded-full bg-indigo-600 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500 shadow-sm transition-all duration-200"
+              >
                 시작하기
-              </button>
+              </Link>
             </div>
           </div>
         </div>
