@@ -1,22 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "사회공작실 - 나만의 교육용 웹앱 만들기",
-  description: "Vercel로 즉시 배포 가능한 깔끔한 교육용 웹앱 Boilerplate",
+  title: "수연쌤의 아카데미 - 재미있는 역사 학습",
+  description: "파스텔톤 따뜻한 디자인의 교육용 대시보드. 역사 퀴즈, 학습 백과, 복습 노트로 즐겁게 공부해요!",
 };
 
 export default function RootLayout({
@@ -27,9 +23,9 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${poppins.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 font-sans transition-colors duration-300">
+      <body className="min-h-full flex flex-col bg-[var(--pastel-bg)] text-[var(--pastel-fg)] font-sans transition-colors duration-300">
         <Header />
         <main className="flex-1 flex flex-col">
           {children}
@@ -39,4 +35,3 @@ export default function RootLayout({
     </html>
   );
 }
-

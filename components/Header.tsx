@@ -1,114 +1,108 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Home, ArrowLeft, Menu, X } from "lucide-react";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-zinc-200/80 bg-white/70 backdrop-blur-md dark:border-zinc-800/80 dark:bg-zinc-950/70 transition-colors duration-300">
+    <header className="sticky top-0 z-50 w-full border-b border-[var(--pastel-border)] bg-[var(--pastel-card)]/90 backdrop-blur-md transition-colors duration-300">
       <div className="mx-auto flex max-w-7xl h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* 서비스 로고 */}
-        <div className="flex items-center gap-2">
-          <Link 
-            href="/" 
-            className="group flex items-center gap-2 text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50"
+        {/* 좌측: 홈/뒤로가기 + 브랜드 */}
+        <div className="flex items-center gap-3">
+          {/* 홈 버튼 */}
+          <Link href="/" className="flex items-center justify-center w-9 h-9 rounded-xl bg-[var(--pastel-accent-soft)] hover:bg-[var(--pastel-accent)]/30 transition-colors duration-200" title="홈으로">
+            <Home className="w-5 h-5 text-[var(--pastel-accent)]" />
+          </Link>
+          {/* 뒤로가기 버튼 */}
+          <button 
+            onClick={() => router.back()} 
+            className="flex items-center justify-center w-9 h-9 rounded-xl bg-[var(--pastel-accent-soft)] hover:bg-[var(--pastel-accent)]/30 transition-colors duration-200"
+            title="뒤로가기"
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform duration-200">
-              社
+            <ArrowLeft className="w-5 h-5 text-[var(--pastel-accent)]" />
+          </button>
+          {/* 브랜드 로고 */}
+          <Link href="/" className="group flex items-center gap-2.5 ml-1">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#f0b5c8] to-[#e8a87c] text-white text-lg shadow-md group-hover:scale-105 transition-transform duration-200">
+              🎓
             </span>
-            <span className="font-extrabold bg-gradient-to-r from-zinc-900 to-zinc-700 dark:from-zinc-100 dark:to-zinc-300 bg-clip-text text-transparent">
-              사회공작실
+            <span className="text-lg font-bold bg-gradient-to-r from-[#c47a5a] to-[#b06a8a] bg-clip-text text-transparent tracking-tight">
+              수연쌤의 아카데미
             </span>
           </Link>
         </div>
 
-        {/* 데스크탑 네비게이션 바 공간 */}
-        <nav className="hidden md:flex items-center gap-8">
+        {/* 데스크탑 네비게이션 */}
+        <nav className="hidden md:flex items-center gap-6">
           <Link 
             href="/" 
-            className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors duration-200"
+            className="text-sm font-semibold text-[var(--pastel-fg)] hover:text-[var(--pastel-accent)] transition-colors duration-200"
           >
-            조선 역사 퀴즈
+            홈
           </Link>
           <Link 
             href="/" 
-            className="text-sm font-medium text-zinc-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-indigo-400 transition-colors duration-200"
+            className="text-sm font-medium text-[var(--pastel-fg)]/60 hover:text-[var(--pastel-accent)] transition-colors duration-200"
           >
-            소개
+            역사 퀴즈
           </Link>
           <Link 
             href="/" 
-            className="text-sm font-medium text-zinc-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-indigo-400 transition-colors duration-200"
+            className="text-sm font-medium text-[var(--pastel-fg)]/60 hover:text-[var(--pastel-accent)] transition-colors duration-200"
           >
-            워크숍
+            학습 백과
           </Link>
         </nav>
 
-        {/* 우측 유틸리티 버튼 */}
-        <div className="hidden md:flex items-center gap-4">
-          <Link 
-            href="/"
-            className="rounded-full bg-zinc-900 px-5 py-2 text-sm font-semibold text-white hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 shadow-sm transition-all duration-200 hover:-translate-y-[1px]"
-          >
-            시작하기
-          </Link>
-        </div>
-
-        {/* 모바일 햄버거 메뉴 버튼 */}
+        {/* 모바일 메뉴 버튼 */}
         <div className="flex md:hidden">
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             type="button"
-            className="inline-flex items-center justify-center rounded-md p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-200 focus:outline-none transition-colors duration-200"
+            className="inline-flex items-center justify-center rounded-xl p-2 text-[var(--pastel-fg)]/50 hover:bg-[var(--pastel-accent-soft)] transition-colors duration-200"
             aria-controls="mobile-menu"
             aria-expanded={isMenuOpen}
           >
             <span className="sr-only">메뉴 열기</span>
             {isMenuOpen ? (
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <X className="h-6 w-6" />
             ) : (
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-              </svg>
+              <Menu className="h-6 w-6" />
             )}
           </button>
         </div>
       </div>
 
-      {/* 모바일 드롭다운 네비게이션 */}
+      {/* 모바일 드롭다운 */}
       {isMenuOpen && (
-        <div className="md:hidden border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 transition-all duration-300 ease-in-out" id="mobile-menu">
+        <div className="md:hidden border-b border-[var(--pastel-border)] bg-[var(--pastel-card)] transition-all duration-300 ease-in-out" id="mobile-menu">
           <div className="space-y-1 px-4 pb-4 pt-2">
             <Link
               href="/"
-              className="block rounded-md px-3 py-2 text-base font-bold text-indigo-600 dark:text-indigo-400 hover:bg-zinc-50 dark:hover:bg-zinc-900"
+              className="block rounded-xl px-3 py-2.5 text-base font-bold text-[var(--pastel-accent)] hover:bg-[var(--pastel-accent-soft)]"
+              onClick={() => setIsMenuOpen(false)}
             >
-              조선 역사 퀴즈
+              🏠 홈
             </Link>
             <Link
               href="/"
-              className="block rounded-md px-3 py-2 text-base font-medium text-zinc-700 hover:bg-zinc-50 hover:text-indigo-600 dark:text-zinc-300 dark:hover:bg-zinc-900 dark:hover:text-indigo-400"
+              className="block rounded-xl px-3 py-2.5 text-base font-medium text-[var(--pastel-fg)]/70 hover:bg-[var(--pastel-accent-soft)]"
+              onClick={() => setIsMenuOpen(false)}
             >
-              소개
+              🎮 역사 퀴즈
             </Link>
             <Link
               href="/"
-              className="block rounded-md px-3 py-2 text-base font-medium text-zinc-700 hover:bg-zinc-50 hover:text-indigo-600 dark:text-zinc-300 dark:hover:bg-zinc-900 dark:hover:text-indigo-400"
+              className="block rounded-xl px-3 py-2.5 text-base font-medium text-[var(--pastel-fg)]/70 hover:bg-[var(--pastel-accent-soft)]"
+              onClick={() => setIsMenuOpen(false)}
             >
-              워크숍
+              📚 학습 백과
             </Link>
-            <div className="pt-4">
-              <Link 
-                href="/"
-                className="block w-full rounded-full bg-indigo-600 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500 shadow-sm transition-all duration-200"
-              >
-                시작하기
-              </Link>
-            </div>
           </div>
         </div>
       )}

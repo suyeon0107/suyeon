@@ -1,40 +1,30 @@
-import Link from "next/link";
-
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="w-full border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 transition-colors duration-300">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:flex md:items-center md:justify-between lg:px-8">
-        {/* 소셜 링크 또는 유틸리티 링크 플레이스홀더 */}
-        <div className="flex justify-center space-x-6 md:order-2">
-          <Link
-            href="#"
-            className="text-xs text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors duration-200"
-          >
-            이용약관
-          </Link>
-          <Link
-            href="#"
-            className="text-xs text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors duration-200"
-          >
-            개인정보처리방침
-          </Link>
-          <Link
-            href="#"
-            className="text-xs text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors duration-200"
-          >
-            문의하기
-          </Link>
-          
-          {/*여기에 추가적인 푸터 링크를 입력하세요. */}
+    <footer className="w-full border-t border-[var(--pastel-border)] bg-[var(--pastel-card)] transition-colors duration-300">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 md:flex md:items-center md:justify-between lg:px-8">
+        {/* 카피라이트 */}
+        <div className="md:order-1">
+          <p className="text-center text-sm text-[var(--pastel-fg)]/50">
+            &copy; {currentYear} 수연쌤의 아카데미. All rights reserved.
+          </p>
         </div>
 
-        {/* 카피라이트 정보 */}
-        <div className="mt-4 md:order-1 md:mt-0">
-          <p className="text-center text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-            &copy; {currentYear} 사회공작실. All rights reserved.
-          </p>
+        {/* 링크 */}
+        <div className="flex justify-center space-x-6 mt-3 md:mt-0 md:order-2">
+          <a
+            href="#"
+            className="text-xs text-[var(--pastel-fg)]/40 hover:text-[var(--pastel-accent)] transition-colors duration-200"
+          >
+            이용약관
+          </a>
+          <a
+            href="#"
+            className="text-xs text-[var(--pastel-fg)]/40 hover:text-[var(--pastel-accent)] transition-colors duration-200"
+          >
+            문의하기
+          </a>
         </div>
       </div>
     </footer>

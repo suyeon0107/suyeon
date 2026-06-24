@@ -350,8 +350,8 @@ export function ThemeApp({ onClose, currentWallpaper, onSelectWallpaper }: Theme
       {/* 콘텐츠 */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         <div className="bg-white dark:bg-zinc-950 p-4 rounded-2xl border border-zinc-200/60 dark:border-zinc-800 text-center shadow-sm">
-          <h3 className="text-sm font-extrabold mb-1">스마트폰 배경화면 선택</h3>
-          <p className="text-xs text-zinc-400 mb-4">마음에 드는 그라디언트 테마로 디바이스 스킨을 변경해보세요.</p>
+          <h3 className="text-sm font-extrabold mb-1">대시보드 배경 테마 선택</h3>
+          <p className="text-xs text-zinc-400 mb-4">마음에 드는 그라디언트 테마로 배경을 변경해보세요.</p>
 
           <div className="grid grid-cols-2 gap-3">
             {WALLPAPER_OPTIONS.map((wp) => (
@@ -379,7 +379,7 @@ export function ThemeApp({ onClose, currentWallpaper, onSelectWallpaper }: Theme
   );
 }
 
-// --- 4. 사회공작실 소개 (About App) ---
+// --- 4. 수연쌤의 아카데미 소개 (About App) ---
 export function AboutApp({ onClose }: ExploreAppProps) {
   return (
     <div className="flex flex-col h-full bg-slate-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 overflow-hidden">
@@ -400,27 +400,27 @@ export function AboutApp({ onClose }: ExploreAppProps) {
       {/* 콘텐츠 */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         <div className="text-center py-6">
-          <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white text-3xl font-extrabold shadow-lg mx-auto mb-3 animate-pulse">
-            社
+          <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#f0b5c8] to-[#e8a87c] text-white text-3xl shadow-lg mx-auto mb-3">
+            🎓
           </span>
-          <h3 className="font-extrabold text-lg bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
-            사회공작실
+          <h3 className="font-extrabold text-lg bg-gradient-to-r from-[#c47a5a] to-[#b06a8a] bg-clip-text text-transparent">
+            수연쌤의 아카데미
           </h3>
-          <p className="text-xs text-zinc-400 mt-1">v1.0.0 (Education Boilerplate)</p>
+          <p className="text-xs text-zinc-400 mt-1">v1.0.0 (Education Dashboard)</p>
         </div>
 
         <div className="bg-white dark:bg-zinc-950 rounded-2xl p-4 border border-zinc-200/60 dark:border-zinc-800 shadow-sm space-y-3.5">
           <div>
             <h4 className="text-xs font-extrabold text-indigo-600 dark:text-indigo-400 mb-1">📢 소개 및 제작 목적</h4>
             <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
-              사회공작실은 코딩 교육 및 사회 교과(역사, 지리, 경제 등) 학습용 웹 애플리케이션을 누구나 신속하게 만들고 Vercel로 쉽게 배포해 볼 수 있도록 설계된 인터랙티브 교육용 템플릿입니다.
+              수연쌤의 아카데미는 역사, 지리, 경제 등 사회 교과 학습을 재미있고 효과적으로 할 수 있도록 설계된 인터랙티브 교육용 대시보드입니다.
             </p>
           </div>
 
           <div className="border-t border-zinc-100 dark:border-zinc-900 pt-3">
             <h4 className="text-xs font-extrabold text-indigo-600 dark:text-indigo-400 mb-1">✨ 핵심 기능</h4>
             <ul className="text-xs text-zinc-600 dark:text-zinc-300 space-y-1 list-disc pl-4 leading-relaxed">
-              <li>실감나는 모바일 앱 스타일 대화형 대시보드</li>
+              <li>아기자기한 파스텔톤 교육용 대시보드</li>
               <li>조선 전·후기를 망라하는 수준 높은 역사 퀴즈</li>
               <li>실시간 리더보드 연동을 통한 협동·경쟁 학습</li>
               <li>언제 어디서나 활용할 수 있는 복습 자료 및 간편 메모</li>
