@@ -35,7 +35,7 @@ const getLocalRankings = (): Ranking[] => {
   }
   try {
     return JSON.parse(stored);
-  } catch (e) {
+  } catch {
     return INITIAL_MOCK_RANKINGS;
   }
 };
@@ -100,7 +100,7 @@ export const rankingService = {
         }
 
         return { success: true };
-      } catch (e: any) {
+      } catch (e: unknown) {
         console.error("Supabase exception, saving to localStorage:", e);
         this.saveLocalRanking(studentName, score, category);
         return { success: true, error: "네트워크 오류로 인해 로컬 브라우저에 저장되었습니다." };

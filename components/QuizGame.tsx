@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { QUIZ_DATA, QuestionType, QuizCategoryType } from "../lib/quizData";
+import { QUIZ_DATA } from "../lib/quizData";
 import { rankingService, Ranking } from "../lib/rankingService";
 import { 
   Trophy, 
@@ -13,7 +13,6 @@ import {
   CheckCircle, 
   XCircle, 
   Loader2,
-  Sparkles,
   ChevronRight
 } from "lucide-react";
 import { isSupabaseConfigured } from "../lib/supabaseClient";
@@ -40,22 +39,29 @@ export default function QuizGame() {
 
   // Fetch rankings whenever we open leaderboard or change ranking tabs
   useEffect(() => {
+    let isMounted = true;
     if (step === "leaderboard") {
-      fetchRankings(leaderboardTab);
+      const loadData = async () => {
+        setIsRankingsLoading(true);
+        try {
+          const data = await rankingService.getRankings(leaderboardTab);
+          if (isMounted) {
+            setRankings(data);
+          }
+        } catch (e) {
+          console.error(e);
+        } finally {
+          if (isMounted) {
+            setIsRankingsLoading(false);
+          }
+        }
+      };
+      loadData();
     }
+    return () => {
+      isMounted = false;
+    };
   }, [step, leaderboardTab]);
-
-  const fetchRankings = async (cat: "early" | "late") => {
-    setIsRankingsLoading(true);
-    try {
-      const data = await rankingService.getRankings(cat);
-      setRankings(data);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsRankingsLoading(false);
-    }
-  };
 
   const handleStartQuiz = (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,6 +109,7 @@ export default function QuizGame() {
         setSubmitError(response.error || "점수 등록 실패");
       }
     } catch (e) {
+      console.error(e);
       setSubmitError("서버와의 통신 오류가 발생했습니다.");
     } finally {
       setIsSubmitting(false);

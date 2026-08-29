@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { 
   Scale, 
   Search, 
-  HelpCircle, 
   BookOpen, 
   Sparkles, 
   RotateCcw, 
