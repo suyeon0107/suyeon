@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import QuizGame from "@/components/QuizGame";
+import HumanRightsGuide from "@/components/HumanRightsGuide";
 import { 
   ExploreApp, 
   ReviewApp, 
@@ -16,17 +17,27 @@ import {
   BookMarked, 
   Palette, 
   Home,
-  ArrowLeft
+  ArrowLeft,
+  Scale
 } from "lucide-react";
 
 export default function HomePage() {
-  const [activeApp, setActiveApp] = useState<"quiz" | "explore" | "review" | "theme" | "about" | null>(null);
+  const [activeApp, setActiveApp] = useState<"quiz" | "human-rights" | "explore" | "review" | "theme" | "about" | null>(null);
   const [wallpaper, setWallpaper] = useState<WallpaperId>("lavender");
 
   const selectedWallpaper = WALLPAPER_OPTIONS.find((wp) => wp.id === wallpaper) || WALLPAPER_OPTIONS[0];
 
   // 메뉴 아이콘 데이터
   const menuItems = [
+    {
+      id: "human-rights" as const,
+      label: "인권구제 가이드",
+      emoji: "⚖️",
+      icon: Scale,
+      gradient: "from-[#a8d4f0] to-[#80b5e0]",
+      shadow: "shadow-blue-200/50",
+      description: "인권 침해 상황별 구제 진단!",
+    },
     {
       id: "quiz" as const,
       label: "역사 퀴즈",
@@ -86,6 +97,7 @@ export default function HomePage() {
             <ArrowLeft className="w-5 h-5 text-[var(--pastel-accent)]" />
           </button>
           <span className="text-base font-bold text-[var(--pastel-fg)]">
+            {activeApp === "human-rights" && "⚖️ 인권구제 가이드 & 시뮬레이터"}
             {activeApp === "quiz" && "🎮 역사 퀴즈"}
             {activeApp === "explore" && "📚 학습 백과"}
             {activeApp === "review" && "📝 복습 노트"}
@@ -96,7 +108,8 @@ export default function HomePage() {
 
         {/* 앱 콘텐츠 */}
         <div className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-4xl">
+          <div className="mx-auto max-w-5xl">
+            {activeApp === "human-rights" && <HumanRightsGuide />}
             {activeApp === "quiz" && <QuizGame />}
             {activeApp === "explore" && <ExploreApp onClose={() => setActiveApp(null)} />}
             {activeApp === "review" && <ReviewApp onClose={() => setActiveApp(null)} />}

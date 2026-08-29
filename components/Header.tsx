@@ -46,6 +46,12 @@ export default function Header() {
             홈
           </Link>
           <Link 
+            href="/human-rights" 
+            className="text-sm font-medium text-[var(--pastel-fg)]/80 hover:text-[var(--pastel-accent)] transition-colors duration-200 flex items-center gap-1"
+          >
+            <span>⚖️ 인권구제 가이드</span>
+          </Link>
+          <Link 
             href="/" 
             className="text-sm font-medium text-[var(--pastel-fg)]/60 hover:text-[var(--pastel-accent)] transition-colors duration-200"
           >
@@ -88,6 +94,13 @@ export default function Header() {
               onClick={() => setIsMenuOpen(false)}
             >
               🏠 홈
+            </Link>
+            <Link
+              href="/human-rights"
+              className="block rounded-xl px-3 py-2.5 text-base font-medium text-[var(--pastel-fg)]/80 hover:bg-[var(--pastel-accent-soft)]"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              ⚖️ 인권구제 가이드
             </Link>
             <Link
               href="/"

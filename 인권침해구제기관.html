@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>인권 침해 구제 기관 나침반 - 중3 사회</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Pretendard', sans-serif;
+    }
+    .tab-active {
+      border-color: #3b82f6;
+      color: #1d4ed8;
+      background-color: #eff6ff;
+    }
+    .fade-in {
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-xl shadow-md">
+          ⚖️
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-slate-900 leading-tight">인권 침해 구제 가이드 & 시뮬레이터</h1>
+          <p class="text-xs text-slate-500 font-medium">중학교 3학년 사회 · 1. 인권과 헌법 단원 연계</p>
+        </div>
+      </div>
+      
+      <!-- Navigation Tabs -->
+      <nav class="flex space-x-1 sm:space-x-2 bg-slate-100 p-1.5 rounded-xl text-sm font-semibold">
+        <button onclick="switchTab('cases')" id="tab-btn-cases" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all tab-active">
+          🔍 사례로 찾기
+        </button>
+        <button onclick="switchTab('orgs')" id="tab-btn-orgs" class="tab-btn px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all">
+          🏛️ 구제 기관 사전
+        </button>
+        <button onclick="switchTab('quiz')" id="tab-btn-quiz" class="tab-btn px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all">
+          ✏️ 퀴즈로 복습
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full">
+
+    <!-- Section 1: Cases & Interactive Decision Engine -->
+    <div id="view-cases" class="view-content fade-in space-y-8">
+      <!-- Introduction Banner -->
+      <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden">
+        <div class="relative z-10 max-w-2xl">
+          <span class="inline-block bg-white/20 backdrop-blur-sm text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider mb-3">
+            Case Diagnostic
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">"인권이 침해되었을 때, 어디에서 어떻게 구제받을 수 있을까요?"</h2>
+          <p class="mt-2 text-blue-100 text-sm sm:text-base leading-relaxed">
+            나에게 닥친 상황을 선택하거나 교과서 대표 사례를 클릭해보세요. 침해의 원인(개인, 법률/공권력, 행정기관, 언론, 기업 등)에 따라 가장 적합한 기관과 구제 방법을 찾아드립니다.
+          </p>
+        </div>
+        <div class="absolute right-4 -bottom-6 text-9xl opacity-15 select-none pointer-events-none">
+          🏛️
+        </div>
+      </div>
+
+      <!-- Quick Preset Cases from Textbook -->
+      <div>
+        <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <span class="p-1 bg-amber-100 text-amber-700 rounded-md text-sm">교과서 실전</span>
+          교과서 속 주요 침해 사례 바로 알아보기
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Preset Card 1 -->
+          <div onclick="selectPreset(0)" class="cursor-pointer bg-white p-5 rounded-xl border border-slate-200 hover:border-blue-500 hover:shadow-md transition-all group flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800">교과서 20p</span>
+                <span class="text-xs font-medium text-slate-400">행정 처분</span>
+              </div>
+              <h4 class="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">🍲 분식집 억울한 영업정지 처분</h4>
+              <p class="text-xs text-slate-600 mt-2 line-clamp-3">
+                선물받은 식품을 보관했을 뿐인데 유통기한 경과 재료 사용으로 15일 영업정지 처분을 받아 생계가 막막해진 상황.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-blue-600">
+              <span>구제 방법 확인하기</span>
+              <span>→</span>
+            </div>
+          </div>
+
+          <!-- Preset Card 2 -->
+          <div onclick="selectPreset(1)" class="cursor-pointer bg-white p-5 rounded-xl border border-slate-200 hover:border-blue-500 hover:shadow-md transition-all group flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold px-2 py-0.5 rounded bg-purple-100 text-purple-800">교과서 20p</span>
+                <span class="text-xs font-medium text-slate-400">초상권·언론</span>
+              </div>
+              <h4 class="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">📺 동의 없는 방송 얼굴 노출</h4>
+              <p class="text-xs text-slate-600 mt-2 line-clamp-3">
+                영화관에서 연예인 사인을 받다 찍힌 내 사진이 본인 동의 없이 뉴스/방송 프로그램에 그대로 보도된 상황.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-blue-600">
+              <span>구제 방법 확인하기</span>
+              <span>→</span>
+            </div>
+          </div>
+
+          <!-- Preset Card 3 -->
+          <div onclick="selectPreset(2)" class="cursor-pointer bg-white p-5 rounded-xl border border-slate-200 hover:border-blue-500 hover:shadow-md transition-all group flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">교과서 19p</span>
+                <span class="text-xs font-medium text-slate-400">기본권 침해</span>
+              </div>
+              <h4 class="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">🌱 정부의 기후위기 방관 정책</h4>
+              <p class="text-xs text-slate-600 mt-2 line-clamp-3">
+                국가의 소극적인 온실가스 감축 목표로 인해 청소년의 환경권과 안전하게 살아갈 기본권이 침해당한 상황.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-blue-600">
+              <span>구제 방법 확인하기</span>
+              <span>→</span>
+            </div>
+          </div>
+
+          <!-- Preset Card 4 -->
+          <div onclick="selectPreset(3)" class="cursor-pointer bg-white p-5 rounded-xl border border-slate-200 hover:border-blue-500 hover:shadow-md transition-all group flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-800">교과서 19p</span>
+                <span class="text-xs font-medium text-slate-400">개인 간 침해</span>
+              </div>
+              <h4 class="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">💬 인터넷 악플 및 길거리 폭행</h4>
+              <p class="text-xs text-slate-600 mt-2 line-clamp-3">
+                온라인 게시판에서 심한 모욕과 허위사실 유포를 당했거나, 타인에게 신체적 폭행을 당해 상해를 입은 상황.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-blue-600">
+              <span>구제 방법 확인하기</span>
+              <span>→</span>
+            </div>
+          </div>
+
+          <!-- Preset Card 5 -->
+          <div onclick="selectPreset(4)" class="cursor-pointer bg-white p-5 rounded-xl border border-slate-200 hover:border-blue-500 hover:shadow-md transition-all group flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold px-2 py-0.5 rounded bg-cyan-100 text-cyan-800">교과서 19p</span>
+                <span class="text-xs font-medium text-slate-400">차별·제도</span>
+              </div>
+              <h4 class="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">🚷 합리적 이유 없는 차별 & 법규</h4>
+              <p class="text-xs text-slate-600 mt-2 line-clamp-3">
+                특정 성별, 장애, 나이 등을 이유로 채용에서 배제되거나 인권을 제약하는 불합리한 내부 규칙이 존재하는 상황.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-blue-600">
+              <span>구제 방법 확인하기</span>
+              <span>→</span>
+            </div>
+          </div>
+
+          <!-- Preset Card 6 -->
+          <div onclick="selectPreset(5)" class="cursor-pointer bg-white p-5 rounded-xl border border-slate-200 hover:border-blue-500 hover:shadow-md transition-all group flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold px-2 py-0.5 rounded bg-orange-100 text-orange-800">교과서 19p</span>
+                <span class="text-xs font-medium text-slate-400">소비자 권리</span>
+              </div>
+              <h4 class="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">📱 결함 제품 환불 거부</h4>
+              <p class="text-xs text-slate-600 mt-2 line-clamp-3">
+                구입한 전자제품에 명백한 결함이 있음에도 판매자가 환불이나 수리를 부당하게 거부하여 재산상 피해를 본 상황.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-blue-600">
+              <span>구제 방법 확인하기</span>
+              <span>→</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Step-by-Step Decision Wizard -->
+      <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">🧭 맞춤형 구제 기관 진단 마법사</h3>
+            <p class="text-xs text-slate-500 mt-1">상황에 맞는 질문을 순서대로 선택하여 최적의 구제 경로를 찾아보세요.</p>
+          </div>
+          <button onclick="resetWizard()" class="text-xs font-medium text-slate-500 hover:text-slate-800 underline">
+            처음부터 다시
+          </button>
+        </div>
+
+        <div id="wizard-steps-container" class="space-y-6">
+          <!-- Step 1 -->
+          <div id="step-1" class="space-y-3">
+            <label class="block text-sm font-bold text-slate-800">
+              Q1. 누구(어떤 주체)에 의해 권리가 침해되었나요?
+            </label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <button onclick="answerStep1('individual')" class="wizard-btn text-left p-4 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition-all">
+                <span class="font-bold text-sm block text-slate-800">👤 다른 개인 / 일반인</span>
+                <span class="text-xs text-slate-500 mt-1 block">폭행, 사기, 악플, 빌려준 돈 미지급 등</span>
+              </button>
+              <button onclick="answerStep1('government_action')" class="wizard-btn text-left p-4 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition-all">
+                <span class="font-bold text-sm block text-slate-800">🏢 행정기관 / 지자체</span>
+                <span class="text-xs text-slate-500 mt-1 block">위법·부당한 영업정지, 과태료, 행정 처분</span>
+              </button>
+              <button onclick="answerStep1('law_power')" class="wizard-btn text-left p-4 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition-all">
+                <span class="font-bold text-sm block text-slate-800">📜 법률 / 국가 공권력 전체</span>
+                <span class="text-xs text-slate-500 mt-1 block">국가 법률이나 공권력이 헌법상 기본권을 침해</span>
+              </button>
+              <button onclick="answerStep1('discrimination_institution')" class="wizard-btn text-left p-4 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition-all">
+                <span class="font-bold text-sm block text-slate-800">🚫 차별 행위 / 부당한 제도</span>
+                <span class="text-xs text-slate-500 mt-1 block">성별·장애·출신 차별, 인권 침해적 관행 개선</span>
+              </button>
+              <button onclick="answerStep1('media')" class="wizard-btn text-left p-4 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition-all">
+                <span class="font-bold text-sm block text-slate-800">📡 언론사 (신문, 방송, 인터넷)</span>
+                <span class="text-xs text-slate-500 mt-1 block">허위·왜곡 보도, 초상권 침해, 명예훼손</span>
+              </button>
+              <button onclick="answerStep1('consumer')" class="wizard-btn text-left p-4 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition-all">
+                <span class="font-bold text-sm block text-slate-800">🛒 기업 / 판매자 (소비자 피해)</span>
+                <span class="text-xs text-slate-500 mt-1 block">불량 제품 환불 거부, 부당한 계약 위반</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Dynamic Step 2 -->
+          <div id="step-2" class="hidden space-y-3 pt-4 border-t border-slate-100">
+            <!-- Populated dynamically based on Step 1 selection -->
+          </div>
+        </div>
+
+        <!-- Result Display Box -->
+        <div id="result-box" class="hidden mt-8 pt-6 border-t border-slate-200">
+          <!-- Injected via JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Relief Organizations Encyclopedia -->
+    <div id="view-orgs" class="view-content hidden fade-in space-y-8">
+      <div class="bg-slate-900 text-white p-6 sm:p-8 rounded-2xl shadow-md">
+        <h2 class="text-2xl font-black">대한민국의 대표 인권 구제 기관</h2>
+        <p class="text-sm text-slate-300 mt-2 max-w-2xl">
+          인권이 침해당했을 때 사안의 성격에 따라 구제를 신청할 수 있는 국가 기관과 전문 구제 기구들입니다.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- 1. 법원 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between">
+            <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-2xl">
+              ⚖️
+            </div>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+              가장 보편적인 구제 기관
+            </span>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mt-4">1. 법원 (사법부)</h3>
+          <p class="text-xs text-slate-600 mt-1">
+            법을 어겨 인권을 침해한 상대에게 법적 책임을 묻거나 피해를 보상받는 가장 대표적인 기관입니다.
+          </p>
+
+          <div class="mt-4 space-y-2.5">
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs">
+              <span class="font-bold text-slate-800 block mb-0.5">🔹 민사재판 (개인 vs 개인)</span>
+              <p class="text-slate-600">개인 간 갈등으로 인한 손해배상 청구, 계약 위반 분쟁 해결 (예: 명예훼손 손해배상)</p>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs">
+              <span class="font-bold text-slate-800 block mb-0.5">🔹 형사재판 (범죄 처벌)</span>
+              <p class="text-slate-600">폭행, 사기, 절도 등 범죄를 저지른 자에게 국가가 형벌(징역, 벌금)을 부과</p>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs">
+              <span class="font-bold text-slate-800 block mb-0.5">🔹 행정재판 (행정소송)</span>
+              <p class="text-slate-600">행정청의 위법하거나 부당한 행정처분(영업정지 취소 등)에 대해 재판을 청구</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. 헌법재판소 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between">
+            <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-2xl">
+              🏛️
+            </div>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
+              헌법 수호 & 기본권 보장
+            </span>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mt-4">2. 헌법재판소</h3>
+          <p class="text-xs text-slate-600 mt-1">
+            국가의 법률이나 공권력이 헌법에 어긋나 국민의 기본권을 침해했을 때 이를 심판합니다.
+          </p>
+
+          <div class="mt-4 space-y-2.5">
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs">
+              <span class="font-bold text-slate-800 block mb-0.5">🔹 헌법소원 심판 (국민이 직접 청구)</span>
+              <p class="text-slate-600">국민 개인이 공권력 행사/불행사로 기본권(행복추구권, 환경권 등)을 침해당했을 때 직접 헌재에 구제 청구</p>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs">
+              <span class="font-bold text-slate-800 block mb-0.5">🔹 위헌법률 심판 (법원이 제청)</span>
+              <p class="text-slate-600">재판 중 적용될 법률이 헌법에 위반되는지 여부를 법원의 제청으로 심판</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. 국가인권위원회 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between">
+            <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-2xl">
+              🔍
+            </div>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              어디에도 속하지 않는 독립기구
+            </span>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mt-4">3. 국가인권위원회</h3>
+          <p class="text-xs text-slate-600 mt-1">
+            입법부, 사법부, 행정부 어디에도 속하지 않는 **독립 기관**으로 인권 보호의 보루 역할을 수행합니다.
+          </p>
+
+          <div class="mt-4 space-y-2.5">
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs">
+              <span class="font-bold text-slate-800 block mb-0.5">🔹 인권침해 및 차별행위 조사·진정 처리</span>
+              <p class="text-slate-600">차별 행위나 인권 침해 피해자의 진정을 접수하여 엄정하게 조사</p>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs">
+              <span class="font-bold text-slate-800 block mb-0.5">🔹 법·제도 개선 "권고" (재판권 없음 ❌)</span>
+              <p class="text-slate-600">직접 재판이나 처벌을 내리지는 않으며, 정부나 국회에 법과 정책을 고치도록 시정 권고</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. 그 밖의 전문 구제 기관들 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between">
+            <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-2xl">
+              🤝
+            </div>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+              분야별 전문 구제
+            </span>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mt-4">4. 그 밖의 구제 기관</h3>
+          <p class="text-xs text-slate-600 mt-1">
+            특정 생활 영역에서 발생하는 권리 침해를 보다 신속하고 전문적으로 구제합니다.
+          </p>
+
+          <div class="mt-4 space-y-2.5">
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs">
+              <span class="font-bold text-slate-800 block mb-0.5">🔹 국민권익위원회 (행정부 소속)</span>
+              <p class="text-slate-600">행정기관의 부당한 행정처분으로 인한 피해를 **행정심판** 등을 통해 법원보다 신속하게 해결</p>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs">
+              <span class="font-bold text-slate-800 block mb-0.5">🔹 언론중재위원회</span>
+              <p class="text-slate-600">언론의 허위·왜곡 보도, 초상권 침해 등으로 인한 피해 조정 및 정정보도 청구</p>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs">
+              <span class="font-bold text-slate-800 block mb-0.5">🔹 한국소비자원</span>
+              <p class="text-slate-600">물품 및 서비스 이용 중 발생하는 소비자의 권익 침해 구제 및 분쟁 조정</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Quiz Review Mode -->
+    <div id="view-quiz" class="view-content hidden fade-in space-y-8">
+      <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-900">✏️ 인권 구제 기관 자가진단 퀴즈</h2>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">교과서 핵심 내용 및 '스스로 확인' 문제를 풀며 학습을 마무리하세요!</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-semibold px-3 py-1 bg-slate-100 rounded-full text-slate-600">
+              문제: <span id="quiz-progress">1 / 5</span>
+            </span>
+            <span class="text-xs font-bold px-3 py-1 bg-blue-100 text-blue-700 rounded-full">
+              점수: <span id="quiz-score">0점</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Quiz Container -->
+        <div id="quiz-card" class="mt-6">
+          <!-- Question text -->
+          <div class="mb-4">
+            <span id="quiz-category" class="inline-block text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md mb-2">
+              교과서 개념
+            </span>
+            <h3 id="quiz-question" class="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+              문제가 로딩 중입니다...
+            </h3>
+          </div>
+
+          <!-- Options -->
+          <div id="quiz-options" class="space-y-3 my-6">
+            <!-- Injected by JS -->
+          </div>
+
+          <!-- Explanation and Feedback -->
+          <div id="quiz-feedback" class="hidden p-4 rounded-xl text-sm leading-relaxed mb-6">
+            <!-- Injected by JS -->
+          </div>
+
+          <!-- Next Button -->
+          <div class="flex justify-end">
+            <button id="quiz-next-btn" onclick="nextQuiz()" class="hidden px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl shadow-md transition-colors">
+              다음 문제 →
+            </button>
+            <button id="quiz-restart-btn" onclick="restartQuiz()" class="hidden px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-xl shadow-md transition-colors">
+              다시 도전하기 🔄
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="bg-white border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-400">
+    <p>중3 사회 · 1단원 인권과 헌법 학습 도우미 | 누구나 보장받아야 할 소중한 권리</p>
+  </footer>
+
+  <!-- Notification Toast Modal -->
+  <div id="custom-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs hidden p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 transform transition-all scale-100">
+      <div id="modal-header" class="text-lg font-bold text-slate-900 mb-2">알림</div>
+      <div id="modal-body" class="text-sm text-slate-600 mb-6 leading-relaxed">내용</div>
+      <div class="flex justify-end">
+        <button onclick="closeModal()" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl">
+          확인
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* Tab Switching Logic */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.className = 'tab-btn px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all';
+      });
+      document.querySelectorAll('.view-content').forEach(view => {
+        view.classList.add('hidden');
+      });
+
+      const activeBtn = document.getElementById('tab-btn-' + tabId);
+      const activeView = document.getElementById('view-' + tabId);
+
+      if (activeBtn && activeView) {
+        activeBtn.className = 'tab-btn px-3.5 py-1.5 rounded-lg transition-all tab-active';
+        activeView.classList.remove('hidden');
+      }
+    }
+
+    /* Modal Utility */
+    function showModal(title, message) {
+      document.getElementById('modal-header').innerText = title;
+      document.getElementById('modal-body').innerHTML = message;
+      document.getElementById('custom-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('custom-modal').classList.add('hidden');
+    }
+
+    /* Preset Case Database */
+    const PRESET_CASES = [
+      {
+        title: "분식집 억울한 영업정지 처분",
+        source: "교과서 20페이지 사례 1",
+        summary: "선물받은 식품을 냉장고에 보관해 둔 것뿐인데, 유통기한 경과 재료 사용 오해를 받아 15일 영업정지 처분을 받음.",
+        primaryOrg: "국민권익위원회 (행정심판) & 법원 (행정소송)",
+        actionPlan: [
+          {
+            agency: "국민권익위원회 (중앙행정심판위원회)",
+            type: "행정심판",
+            desc: "행정기관의 잘못되거나 가혹한 처분(영업정지)에 대해 행정심판을 청구하여 **법원 재판보다 신속하고 무료로** 구제받을 수 있습니다."
+          },
+          {
+            agency: "법원 (행정법원)",
+            type: "행정재판 (행정소송)",
+            desc: "구청 등 행정기관의 영업정지 처분을 취소해 달라는 행정소송 및 판결 확정 전까지 영업을 계속할 수 있도록 집행정지를 신청합니다."
+          }
+        ],
+        tips: "💡 신속한 생계 유지가 필요한 경우 먼저 '국민권익위원회(행정심판)'를 이용하면 빠르고 간편하게 구제받을 수 있습니다."
+      },
+      {
+        title: "동의 없는 방송 사진 노출 (초상권 침해)",
+        source: "교과서 20페이지 사례 2",
+        summary: "극장 로비에서 연예인 사인을 받다 찍힌 본인의 얼굴이 동의 없이 TV 뉴스/예능 프로그램에 그대로 방영됨.",
+        primaryOrg: "언론중재위원회 & 법원",
+        actionPlan: [
+          {
+            agency: "언론중재위원회",
+            type: "조정 및 중재 신청",
+            desc: "해당 방송사에 초상권 침해에 따른 **정정보도, 사과문 게재, 반론보도 및 손해배상 합의 조정**을 신청합니다. 재판보다 간편하고 신속합니다."
+          },
+          {
+            agency: "법원",
+            type: "민사소송 (손해배상 청구)",
+            desc: "초상권 침해 및 정신적 고통에 대한 위자료를 청구하는 민사재판을 진행할 수 있습니다."
+          }
+        ],
+        tips: "💡 언론 보도로 인한 피해는 '언론중재위원회'를 통하는 것이 가장 전문적이고 빠릅니다."
+      },
+      {
+        title: "정부의 기후위기 방관에 대한 청소년 헌법소원",
+        source: "교과서 19페이지 헌법소원 사례",
+        summary: "정부의 부실한 온실가스 감축 법률과 정책이 청소년들의 환경권과 안전하게 살 기본권을 침해함.",
+        primaryOrg: "헌법재판소",
+        actionPlan: [
+          {
+            agency: "헌법재판소",
+            type: "헌법소원 심판 청구",
+            desc: "국민 개인이 국가의 법률 또는 공권력 행사/불행사로 인해 헌법상 보장된 기본권을 직접 침해받았을 때 헌법소원을 제기하여 해당 정책의 위헌성을 다툽니다."
+          }
+        ],
+        tips: "💡 국가 공권력이나 법률 자체가 국민의 기본권을 침해할 때는 '헌법재판소'의 헌법소원 심판을 청구합니다."
+      },
+      {
+        title: "인터넷 악플 및 물리적 폭행 피해",
+        source: "교과서 19페이지 그림 사례",
+        summary: "온라인 공간에서 심한 모욕과 허위사실 유포를 당하거나 다른 사람에게 신체적 폭행을 당한 경우.",
+        primaryOrg: "법원 (형사재판 및 민사재판)",
+        actionPlan: [
+          {
+            agency: "법원 (형사재판)",
+            type: "경찰/검찰 고소 후 형사처벌",
+            desc: "가해자를 고소하여 모욕죄, 명예훼손죄, 폭행죄 등으로 형사재판을 거쳐 형벌(벌금, 징역)을 받게 합니다."
+          },
+          {
+            agency: "법원 (민사재판)",
+            type: "민사소송 (손해배상 청구)",
+            desc: "폭행 치료비나 명예훼손으로 인한 정신적 위자료 등을 지급하도록 개인 대 개인 민사재판을 제기합니다."
+          }
+        ],
+        tips: "💡 개인 간의 불법행위로 인한 분쟁은 '법원'의 민사·형사 재판이 가장 보편적인 수단입니다."
+      },
+      {
+        title: "합리적 이유 없는 차별 및 불합리한 제도",
+        source: "교과서 19페이지 국가인권위원회 사례",
+        summary: "학교, 직장, 사회에서 성별, 장애, 나이 등을 이유로 부당한 차별을 받거나 인권을 제약하는 규칙이 있는 경우.",
+        primaryOrg: "국가인권위원회",
+        actionPlan: [
+          {
+            agency: "국가인권위원회",
+            type: "진정서 제출 및 시정 권고",
+            desc: "어느 권력에도 속하지 않는 독립기구인 인권위에 진정(신고)을 내면 사실관계를 조사하여 차별 시정 및 법·제도 개선을 해당 기관에 **권고**합니다."
+          }
+        ],
+        tips: "💡 국가인권위원회는 재판을 하지는 않지만, 독립된 지위에서 인권 침해와 차별을 조사하고 개선을 권고합니다."
+      },
+      {
+        title: "결함 있는 전자제품 환불 거부",
+        source: "교과서 19페이지 그 밖의 기관",
+        summary: "새로 구입한 제품에 중대한 결함이 발생했는데도 판매자/기업이 법적 규정을 무시하고 환불과 교환을 거부함.",
+        primaryOrg: "한국소비자원",
+        actionPlan: [
+          {
+            agency: "한국소비자원",
+            type: "소비자 피해구제 및 분쟁조정",
+            desc: "소비자상담(1372) 후 피해구제 신청을 접수하면 사실조사와 전문가 심의를 거쳐 환불, 교환 등의 분쟁 조정을 권고합니다."
+          }
+        ],
+        tips: "💡 소비자 권리 침해는 소송 전 '한국소비자원'을 통해 비용 없이 합리적인 합의를 이끌어낼 수 있습니다."
+      }
+    ];
+
+    /* Preset Selection Trigger */
+    function selectPreset(index) {
+      const data = PRESET_CASES[index];
+      const resultBox = document.getElementById('result-box');
+      
+      let actionsHtml = data.actionPlan.map(act => `
+        <div class="bg-white p-4 rounded-xl border border-blue-100 shadow-xs">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="font-bold text-slate-900 text-sm">${act.agency}</span>
+            <span class="text-xs bg-blue-100 text-blue-800 font-semibold px-2 py-0.5 rounded">${act.type}</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">${act.desc}</p>
+        </div>
+      `).join('');
+
+      resultBox.innerHTML = `
+        <div class="bg-blue-50/70 border border-blue-200 rounded-2xl p-5 sm:p-6 fade-in space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-blue-700 bg-blue-100 px-2.5 py-1 rounded-full">${data.source}</span>
+            <span class="text-xs text-slate-500 font-medium">선택된 사례 분석</span>
+          </div>
+          <h4 class="text-lg font-bold text-slate-900">${data.title}</h4>
+          <p class="text-xs sm:text-sm text-slate-700 bg-white/80 p-3.5 rounded-xl border border-slate-200">${data.summary}</p>
+          
+          <div class="pt-2">
+            <div class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">🎯 권장 구제 기관 및 절차</div>
+            <div class="space-y-2">
+              ${actionsHtml}
+            </div>
+          </div>
+
+          <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 font-medium">
+            ${data.tips}
+          </div>
+        </div>
+      `;
+
+      resultBox.classList.remove('hidden');
+      resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    let wizardAnswers = {};
+
+    function resetWizard() {
+      wizardAnswers = {};
+      document.getElementById('step-2').classList.add('hidden');
+      document.getElementById('step-2').innerHTML = '';
+      document.getElementById('result-box').classList.add('hidden');
+      document.getElementById('result-box').innerHTML = '';
+    }
+
+    function answerStep1(choice) {
+      wizardAnswers.step1 = choice;
+      const step2Container = document.getElementById('step-2');
+      step2Container.innerHTML = '';
+      step2Container.classList.remove('hidden');
+      document.getElementById('result-box').classList.add('hidden');
+
+      let step2Html = '';
+
+      if (choice === 'individual') {
+        step2Html = `
+          <label class="block text-sm font-bold text-slate-800">Q2. 어떤 피해가 발생했나요?</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button onclick="concludeWizard('court_criminal')" class="wizard-btn text-left p-3.5 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50">
+              <span class="font-bold text-sm block text-slate-800">🚨 폭행, 사기, 절도 등 범죄 피해</span>
+              <span class="text-xs text-slate-500 mt-0.5 block">가해자의 처벌을 원함</span>
+            </button>
+            <button onclick="concludeWizard('court_civil')" class="wizard-btn text-left p-3.5 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50">
+              <span class="font-bold text-sm block text-slate-800">💸 금전 피해, 명예훼손 손해배상</span>
+              <span class="text-xs text-slate-500 mt-0.5 block">피해 보상 및 권리 회복을 원함</span>
+            </button>
+          </div>
+        `;
+      } else if (choice === 'government_action') {
+        step2Html = `
+          <label class="block text-sm font-bold text-slate-800">Q2. 어떤 방식으로 해결하길 원하시나요?</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button onclick="concludeWizard('acrc')" class="wizard-btn text-left p-3.5 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50">
+              <span class="font-bold text-sm block text-slate-800">⚡ 비용 부담 없이 신속한 해결</span>
+              <span class="text-xs text-slate-500 mt-0.5 block">행정심판을 통해 빠르고 간편하게 구제</span>
+            </button>
+            <button onclick="concludeWizard('court_admin')" class="wizard-btn text-left p-3.5 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50">
+              <span class="font-bold text-sm block text-slate-800">⚖️ 정식 법원 판결을 통한 해결</span>
+              <span class="text-xs text-slate-500 mt-0.5 block">행정소송을 제기하여 처분의 적법성 판결</span>
+            </button>
+          </div>
+        `;
+      } else if (choice === 'law_power') {
+        step2Html = `
+          <label class="block text-sm font-bold text-slate-800">Q2. 구체적인 상황이 어떤 경우인가요?</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button onclick="concludeWizard('ccourt_appeal')" class="wizard-btn text-left p-3.5 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50">
+              <span class="font-bold text-sm block text-slate-800">👤 국민 개인이 기본권을 침해당함</span>
+              <span class="text-xs text-slate-500 mt-0.5 block">공권력 행사/불행사로 인한 기본권 피해 구제</span>
+            </button>
+            <button onclick="concludeWizard('ccourt_statute')" class="wizard-btn text-left p-3.5 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50">
+              <span class="font-bold text-sm block text-slate-800">⚖️ 진행 중인 재판의 법률 조항이 헌법에 위배됨</span>
+              <span class="text-xs text-slate-500 mt-0.5 block">법원에 위헌 심판 제청 신청</span>
+            </button>
+          </div>
+        `;
+      } else if (choice === 'discrimination_institution') {
+        concludeWizard('nhrc');
+        return;
+      } else if (choice === 'media') {
+        concludeWizard('pac');
+        return;
+      } else if (choice === 'consumer') {
+        concludeWizard('kca');
+        return;
+      }
+
+      step2Container.innerHTML = step2Html;
+    }
+
+    /* Diagnosis Conclusion Generator */
+    const CONCLUSION_DATA = {
+      court_criminal: {
+        agency: "법원 (형사재판)",
+        badge: "사법부 / 보편적 구제",
+        title: "형사고소 후 형사재판을 통한 가해자 처벌",
+        desc: "수사기관(경찰·검찰)에 고소장을 접수한 뒤, 기소되어 법원에서 열리는 **형사재판**을 통해 법률에 정해진 형벌을 내립니다.",
+        howTo: "경찰서에 피해 사실 진술서 및 증거 제출 → 검찰 기소 → 법원 형사재판"
+      },
+      court_civil: {
+        agency: "법원 (민사재판)",
+        badge: "사법부 / 보편적 구제",
+        title: "민사소송을 통한 손해배상 및 권리 구제",
+        desc: "개인 간의 권리 침해나 금전적 손해에 대하여 법원에 **민사소송** 소장을 제출하여 손해배상금 지급 또는 원상회복 판결을 받습니다.",
+        howTo: "관할 법원에 민사 소장 접수 → 변론 기일 출석 → 판결 및 강제집행"
+      },
+      acrc: {
+        agency: "국민권익위원회 (중앙행정심판위원회)",
+        badge: "행정부 소속 / 신속·무료",
+        title: "행정심판 청구를 통한 신속 구제",
+        desc: "행정청의 위법·부당한 처분(영업정지, 면허취소 등)에 대해 **법원 소송보다 신속하고 무료로** 해결할 수 있는 제도입니다.",
+        howTo: "처분이 있음을 안 날부터 90일 이내에 온라인 행정심판 포털 또는 위원회에 청구서 제출"
+      },
+      court_admin: {
+        agency: "법원 (행정소송)",
+        badge: "사법부 / 법적 최종 판결",
+        title: "행정법원에 행정소송 제기",
+        desc: "행정기관의 잘못된 처분을 취소해 달라는 행정소송을 행정법원에 제기하여 구제받습니다.",
+        howTo: "관할 행정법원에 처분 취소 소송 및 집행정지 신청서 접수"
+      },
+      ccourt_appeal: {
+        agency: "헌법재판소 (헌법소원 심판)",
+        badge: "헌법 수호 / 기본권 구제",
+        title: "국민의 기본권 보장을 위한 헌법소원 심판 청구",
+        desc: "국가 공권력의 행사나 불행사로 인하여 헌법상 보장된 자신의 기본권(행복추구권, 평등권, 환경권 등)을 직접 침해당했을 때 청구합니다.",
+        howTo: "사유가 있음을 안 날부터 90일 이내에 헌법재판소에 헌법소원 심판 청구서 제출"
+      },
+      ccourt_statute: {
+        agency: "헌법재판소 (위헌법률 심판)",
+        badge: "법률의 위헌 여부 심판",
+        title: "법원을 통한 위헌법률 심판 제청",
+        desc: "재판의 전제가 되는 법률이 헌법에 위반되는지 여부를 판단하기 위해, 당사자가 법원에 위헌법률심판제청을 신청하거나 법원이 직권으로 제청합니다.",
+        howTo: "소송이 계속 중인 법원에 '위헌법률심판 제청 신청서' 제출"
+      },
+      nhrc: {
+        agency: "국가인권위원회",
+        badge: "3부 어디에도 속하지 않는 독립기구",
+        title: "인권 침해 및 차별 행위 조사와 시정 권고",
+        desc: "성별, 종교, 장애, 출신 등을 이유로 한 차별 행위나 국가기관의 인권 침해에 대해 진정을 접수받아 사실조사 후 법·제도 개선을 권고합니다.",
+        howTo: "국가인권위원회 홈페이지(진정 접수) 또는 국번없이 1331 전화 상담"
+      },
+      pac: {
+        agency: "언론중재위원회",
+        badge: "언론 피해 구제 전문",
+        title: "언론보도 피해 조정 및 정정보도 청구",
+        desc: "방송, 신문, 인터넷 뉴스 등의 허위·과장·왜곡 보도나 무단 사진 보도(초상권 침해)로 입은 피해를 신속하게 조정·중재합니다.",
+        howTo: "보도가 있은 날부터 3개월 이내에 언론중재위원회에 조정 신청서 접수"
+      },
+      kca: {
+        agency: "한국소비자원",
+        badge: "소비자 권익 보호",
+        title: "소비자 피해 구제 및 분쟁조정",
+        desc: "물품 결함, 환불 거부, 부당한 약관 등 소비 생활 중 발생한 분쟁을 전문적으로 조사하여 합의 권고 및 분쟁조정을 진행합니다.",
+        howTo: "소비자상담센터(국번없이 1372) 상담 후 피해구제 신청 접수"
+      }
+    };
+
+    function concludeWizard(key) {
+      const item = CONCLUSION_DATA[key];
+      const resultBox = document.getElementById('result-box');
+
+      resultBox.innerHTML = `
+        <div class="bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-2xl p-6 sm:p-7 shadow-xl fade-in space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold px-3 py-1 rounded-full bg-blue-500 text-white">${item.agency}</span>
+            <span class="text-xs text-slate-300">${item.badge}</span>
+          </div>
+          <h4 class="text-xl font-bold text-white">${item.title}</h4>
+          <p class="text-sm text-slate-200 leading-relaxed bg-white/10 p-4 rounded-xl backdrop-blur-xs">${item.desc}</p>
+          
+          <div class="pt-2 border-t border-slate-700/60">
+            <span class="text-xs font-bold text-blue-300 block mb-1">📋 구제 신청 절차 요약</span>
+            <p class="text-xs text-slate-300">${item.howTo}</p>
+          </div>
+        </div>
+      `;
+
+      resultBox.classList.remove('hidden');
+      resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    const QUIZ_DATA = [
+      {
+        category: "교과서 20p 스스로 확인 1번",
+        question: "법원은 권리를 구제하는 보편적인 수단인 ( 　　 )을/를 통해 침해된 권리를 보장한다. 괄호에 알맞은 말은?",
+        options: ["재판", "행정심판", "권고", "서명운동"],
+        answer: 0,
+        explanation: "법원은 권리를 구제하는 가장 보편적인 기관으로, 민사·형사·행정 등 **재판**을 통해 침해된 권리를 보장합니다."
+      },
+      {
+        category: "교과서 20p 스스로 확인 2번",
+        question: "입법부, 사법부, 행정부 어디에도 속하지 않는 '독립 기구'로 인권 보장과 차별 개선을 위해 설립된 기관은?",
+        options: ["법원", "헌법재판소", "국가인권위원회", "국민권익위원회"],
+        answer: 2,
+        explanation: "국가인권위원회는 어느 국가기관에도 소속되지 않는 독립 기구로서 인권 침해 및 차별 행위를 조사하고 법과 제도의 개선을 '권고'합니다."
+      },
+      {
+        category: "상황 판단 문제",
+        question: "퇴직금으로 분식집을 열었는데 억울하게 영업정지 처분을 받았습니다. 법원 재판보다 신속하고 무료로 구제받을 수 있는 기관과 수단은?",
+        options: [
+          "한국소비자원 - 분쟁조정",
+          "국민권익위원회 - 행정심판",
+          "언론중재위원회 - 정정보도",
+          "헌법재판소 - 위헌법률심판"
+        ],
+        answer: 1,
+        explanation: "행정기관의 잘못된 처분으로 인한 피해는 **국민권익위원회(중앙행정심판위원회)**의 '행정심판'을 통해 신속하게 구제받을 수 있습니다."
+      },
+      {
+        category: "기본권 침해 문제",
+        question: "국가의 부당한 법률이나 공권력 행사로 인해 헌법상 보장된 기본권을 침해당했을 때, 국민 개인이 직접 청구하는 제도는?",
+        options: [
+          "민사소송",
+          "헌법소원 심판",
+          "형사고소",
+          "소비자 분쟁조정"
+        ],
+        answer: 1,
+        explanation: "헌법재판소의 **헌법소원 심판**은 국민 개인이 공권력이나 법률로 인해 헌법상 기본권을 침해받았을 때 청구하는 제도입니다."
+      },
+      {
+        category: "언론 피해 문제",
+        question: "내 얼굴 사진이 본인 동의 없이 TV 뉴스나 방송 프로그램에 무단으로 보도되어 초상권을 침해당했을 때 가장 적절한 구제 기관은?",
+        options: [
+          "언론중재위원회",
+          "한국소비자원",
+          "국가인권위원회",
+          "공정거래위원회"
+        ],
+        answer: 0,
+        explanation: "언론의 잘못된 보도나 초상권·사생활 침해 피해는 **언론중재위원회**를 통해 정정보도 청구나 손해배상 조정을 신청할 수 있습니다."
+      }
+    ];
+
+    let currentQuizIndex = 0;
+    let quizScore = 0;
+    let selectedOption = null;
+
+    function renderQuiz() {
+      const q = QUIZ_DATA[currentQuizIndex];
+      document.getElementById('quiz-progress').innerText = `${currentQuizIndex + 1} / ${QUIZ_DATA.length}`;
+      document.getElementById('quiz-score').innerText = `${quizScore}점`;
+      document.getElementById('quiz-category').innerText = q.category;
+      document.getElementById('quiz-question').innerText = q.question;
+
+      const optionsContainer = document.getElementById('quiz-options');
+      optionsContainer.innerHTML = '';
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-opt-btn w-full text-left p-3.5 sm:p-4 rounded-xl border border-slate-200 text-slate-800 text-sm font-semibold hover:border-blue-400 hover:bg-slate-50 transition-all flex items-center justify-between';
+        btn.innerHTML = `
+          <span>${idx + 1}. ${opt}</span>
+          <span class="opt-icon text-xs text-slate-400">선택</span>
+        `;
+        btn.onclick = () => checkQuizAnswer(idx);
+        optionsContainer.appendChild(btn);
+      });
+
+      document.getElementById('quiz-feedback').classList.add('hidden');
+      document.getElementById('quiz-next-btn').classList.add('hidden');
+      document.getElementById('quiz-restart-btn').classList.add('hidden');
+    }
+
+    function checkQuizAnswer(chosenIdx) {
+      const q = QUIZ_DATA[currentQuizIndex];
+      const optButtons = document.querySelectorAll('.quiz-opt-btn');
+      
+      optButtons.forEach(btn => btn.disabled = true);
+
+      const feedback = document.getElementById('quiz-feedback');
+      const isCorrect = chosenIdx === q.answer;
+
+      if (isCorrect) {
+        quizScore += 20;
+        document.getElementById('quiz-score').innerText = `${quizScore}점`;
+        optButtons[chosenIdx].className = 'quiz-opt-btn w-full text-left p-3.5 sm:p-4 rounded-xl border border-emerald-500 bg-emerald-50 text-emerald-900 text-sm font-bold flex items-center justify-between';
+        feedback.className = 'p-4 rounded-xl text-xs sm:text-sm leading-relaxed mb-6 bg-emerald-50 border border-emerald-200 text-emerald-900';
+        feedback.innerHTML = `<strong>🎉 정답입니다!</strong><br>${q.explanation}`;
+      } else {
+        optButtons[chosenIdx].className = 'quiz-opt-btn w-full text-left p-3.5 sm:p-4 rounded-xl border border-rose-500 bg-rose-50 text-rose-900 text-sm font-bold flex items-center justify-between';
+        optButtons[q.answer].className = 'quiz-opt-btn w-full text-left p-3.5 sm:p-4 rounded-xl border border-emerald-500 bg-emerald-50 text-emerald-900 text-sm font-bold flex items-center justify-between';
+        feedback.className = 'p-4 rounded-xl text-xs sm:text-sm leading-relaxed mb-6 bg-rose-50 border border-rose-200 text-rose-900';
+        feedback.innerHTML = `<strong>❌ 아쉽네요! 정답은 ${q.answer + 1}번입니다.</strong><br>${q.explanation}`;
+      }
+
+      feedback.classList.remove('hidden');
+
+      if (currentQuizIndex < QUIZ_DATA.length - 1) {
+        document.getElementById('quiz-next-btn').classList.remove('hidden');
+      } else {
+        document.getElementById('quiz-restart-btn').classList.remove('hidden');
+        document.getElementById('quiz-restart-btn').innerText = `최종 결과: ${quizScore}점 (다시 풀기)`;
+      }
+    }
+
+    function nextQuiz() {
+      currentQuizIndex++;
+      renderQuiz();
+    }
+
+    function restartQuiz() {
+      currentQuizIndex = 0;
+      quizScore = 0;
+      renderQuiz();
+    }
+
+    window.onload = function() {
+      renderQuiz();
+    };
+  </script>
+</body>
+</html>
