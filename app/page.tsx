@@ -5,6 +5,7 @@ import QuizGame from "@/components/QuizGame";
 import HumanRightsGuide from "@/components/HumanRightsGuide";
 import SocialPresentationPicker from "@/components/SocialPresentationPicker";
 import SocialQuizGame from "@/components/SocialQuizGame";
+import StudentActivityTracker from "@/components/StudentActivityTracker";
 import { 
   ExploreApp, 
   ReviewApp, 
@@ -20,11 +21,12 @@ import {
   Dice5,
   GraduationCap,
   Sparkles,
-  FolderOpen
+  FolderOpen,
+  BarChart3
 } from "lucide-react";
 
 export default function HomePage() {
-  const [activeApp, setActiveApp] = useState<"quiz" | "social-quiz" | "human-rights" | "social-picker" | "explore" | "review" | "about" | null>(null);
+  const [activeApp, setActiveApp] = useState<"quiz" | "social-quiz" | "human-rights" | "social-picker" | "activity-tracker" | "explore" | "review" | "about" | null>(null);
 
   // 카테고리 폴더별 메뉴 데이터
   const menuCategories = [
@@ -88,6 +90,14 @@ export default function HomePage() {
       badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200",
       items: [
         {
+          id: "activity-tracker" as const,
+          label: "활동 기록 관리",
+          emoji: "📊",
+          icon: BarChart3,
+          gradient: "from-emerald-500 to-teal-600",
+          description: "학급 명렬표 연동 학생 활동 점수 & 게이지 바 관리",
+        },
+        {
           id: "social-picker" as const,
           label: "발표자 추첨기",
           emoji: "🎯",
@@ -120,6 +130,7 @@ export default function HomePage() {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <span className="text-base font-bold text-slate-900">
+            {activeApp === "activity-tracker" && "📊 학급 활동 기록 및 점수 관리"}
             {activeApp === "social-quiz" && "🏛️ 중3 사회 단원별 개념 퀴즈"}
             {activeApp === "social-picker" && "🎯 발표자 랜덤 추첨기"}
             {activeApp === "human-rights" && "⚖️ 인권구제 가이드 & 시뮬레이터"}
@@ -133,6 +144,7 @@ export default function HomePage() {
         {/* 앱 콘텐츠 */}
         <div className="flex-1 overflow-y-auto">
           <div className="mx-auto max-w-6xl">
+            {activeApp === "activity-tracker" && <StudentActivityTracker />}
             {activeApp === "social-quiz" && <SocialQuizGame />}
             {activeApp === "social-picker" && <SocialPresentationPicker />}
             {activeApp === "human-rights" && <HumanRightsGuide />}

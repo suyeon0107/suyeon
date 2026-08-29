@@ -88,6 +88,12 @@ export default function Header() {
 
           {/* 학습 도구 폴더 */}
           <Link 
+            href="/activity-tracker" 
+            className="text-xs sm:text-sm font-bold text-slate-700 hover:text-emerald-600 transition-colors duration-200 flex items-center gap-1"
+          >
+            <span>📊 활동 기록</span>
+          </Link>
+          <Link 
             href="/social-picker" 
             className="text-xs sm:text-sm font-bold text-slate-700 hover:text-rose-600 transition-colors duration-200 flex items-center gap-1"
           >
@@ -172,6 +178,13 @@ export default function Header() {
             <div className="pt-2 pb-1 border-t border-slate-100 font-bold text-slate-400 text-[11px] px-3">
               🛠️ 수업 도구
             </div>
+            <Link
+              href="/activity-tracker"
+              className="block rounded-xl px-3 py-2 font-medium text-slate-700 hover:bg-slate-100"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              📊 활동 기록 관리
+            </Link>
             <Link
               href="/social-picker"
               className="block rounded-xl px-3 py-2 font-medium text-slate-700 hover:bg-slate-100"
