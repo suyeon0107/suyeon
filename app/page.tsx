@@ -8,93 +8,94 @@ import SocialQuizGame from "@/components/SocialQuizGame";
 import { 
   ExploreApp, 
   ReviewApp, 
-  ThemeApp, 
-  AboutApp, 
-  WallpaperId, 
-  WALLPAPER_OPTIONS 
+  AboutApp 
 } from "@/components/PhoneApps";
 import { 
   Gamepad2, 
   BookOpen, 
   BookMarked, 
-  Palette, 
   Home,
   ArrowLeft,
   Scale,
   Dice5,
-  GraduationCap
+  GraduationCap,
+  Sparkles,
+  FolderOpen
 } from "lucide-react";
 
 export default function HomePage() {
-  const [activeApp, setActiveApp] = useState<"quiz" | "social-quiz" | "human-rights" | "social-picker" | "explore" | "review" | "theme" | "about" | null>(null);
-  const [wallpaper, setWallpaper] = useState<WallpaperId>("lavender");
+  const [activeApp, setActiveApp] = useState<"quiz" | "social-quiz" | "human-rights" | "social-picker" | "explore" | "review" | "about" | null>(null);
 
-  const selectedWallpaper = WALLPAPER_OPTIONS.find((wp) => wp.id === wallpaper) || WALLPAPER_OPTIONS[0];
-
-  // 메뉴 아이콘 데이터
-  const menuItems = [
+  // 카테고리 폴더별 메뉴 데이터
+  const menuCategories = [
     {
-      id: "social-quiz" as const,
-      label: "사회 퀴즈",
-      emoji: "🏛️",
-      icon: GraduationCap,
-      gradient: "from-[#b5c6f0] to-[#8090e0]",
-      shadow: "shadow-indigo-200/50",
-      description: "중3 사회 1~3단원 개념 퀴즈!",
+      categoryName: "🏛️ 사회",
+      categoryDesc: "2015 개정 교육과정 사회 개념 학습 및 인권 구제 가이드",
+      badgeColor: "bg-blue-100 text-blue-800 border-blue-200",
+      items: [
+        {
+          id: "human-rights" as const,
+          label: "인권구제 가이드",
+          emoji: "⚖️",
+          icon: Scale,
+          gradient: "from-blue-500 to-indigo-600",
+          description: "인권 침해 상황별 구제 기관 시뮬레이터",
+        },
+        {
+          id: "social-quiz" as const,
+          label: "사회 퀴즈",
+          emoji: "🏛️",
+          icon: GraduationCap,
+          gradient: "from-indigo-500 to-purple-600",
+          description: "중3 사회 1~3단원 핵심 개념 퀴즈",
+        },
+      ],
     },
     {
-      id: "social-picker" as const,
-      label: "발표자 추첨기",
-      emoji: "🎯",
-      icon: Dice5,
-      gradient: "from-[#f0b5c8] to-[#e8a87c]",
-      shadow: "shadow-pink-200/50",
-      description: "사회 수업 발표자 랜덤 추첨!",
+      categoryName: "📜 역사",
+      categoryDesc: "조선 시대를 탐구하는 재미있는 역사 퀴즈 및 백과사전",
+      badgeColor: "bg-purple-100 text-purple-800 border-purple-200",
+      items: [
+        {
+          id: "quiz" as const,
+          label: "역사 퀴즈",
+          emoji: "🎮",
+          icon: Gamepad2,
+          gradient: "from-purple-500 to-pink-600",
+          description: "조선 전기·후기 역사 퀴즈 & 리더보드",
+        },
+        {
+          id: "explore" as const,
+          label: "학습 백과",
+          emoji: "📚",
+          icon: BookOpen,
+          gradient: "from-amber-400 to-orange-500",
+          description: "조선 시대 핵심 역사 사건과 인물 탐구",
+        },
+        {
+          id: "review" as const,
+          label: "복습 노트",
+          emoji: "📝",
+          icon: BookMarked,
+          gradient: "from-emerald-500 to-teal-600",
+          description: "핵심 낱말 카드 및 나만의 요점 정리",
+        },
+      ],
     },
     {
-      id: "human-rights" as const,
-      label: "인권구제 가이드",
-      emoji: "⚖️",
-      icon: Scale,
-      gradient: "from-[#a8d4f0] to-[#80b5e0]",
-      shadow: "shadow-blue-200/50",
-      description: "인권 침해 상황별 구제 진단!",
-    },
-    {
-      id: "quiz" as const,
-      label: "역사 퀴즈",
-      emoji: "🎮",
-      icon: Gamepad2,
-      gradient: "from-[#d4b5f0] to-[#b5a0e0]",
-      shadow: "shadow-purple-200/50",
-      description: "조선 역사 퀴즈에 도전해보세요!",
-    },
-    {
-      id: "explore" as const,
-      label: "학습 백과",
-      emoji: "📚",
-      icon: BookOpen,
-      gradient: "from-[#f5e6a3] to-[#e8c878]",
-      shadow: "shadow-amber-200/50",
-      description: "역사 지식을 쌓아보세요!",
-    },
-    {
-      id: "review" as const,
-      label: "복습 노트",
-      emoji: "📝",
-      icon: BookMarked,
-      gradient: "from-[#b5e8c3] to-[#8dd4a0]",
-      shadow: "shadow-green-200/50",
-      description: "오답을 복습하고 메모하세요!",
-    },
-    {
-      id: "theme" as const,
-      label: "배경 설정",
-      emoji: "🎨",
-      icon: Palette,
-      gradient: "from-[#f0b5c8] to-[#e090a8]",
-      shadow: "shadow-pink-200/50",
-      description: "나만의 배경을 설정하세요!",
+      categoryName: "🛠️ 학습 도구",
+      categoryDesc: "수업 시간에 활용하는 유용한 발표 및 학습 도구",
+      badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200",
+      items: [
+        {
+          id: "social-picker" as const,
+          label: "발표자 추첨기",
+          emoji: "🎯",
+          icon: Dice5,
+          gradient: "from-rose-400 to-amber-500",
+          description: "학급 명렬표 연동 사회 수업 발표자 랜덤 추첨",
+        },
+      ],
     },
   ];
 
@@ -103,29 +104,28 @@ export default function HomePage() {
     return (
       <div className="flex-1 flex flex-col animate-fadeIn">
         {/* 앱 상단 내비게이션 바 */}
-        <div className="flex items-center gap-3 px-4 sm:px-6 lg:px-8 py-3 bg-[var(--pastel-card)] border-b border-[var(--pastel-border)]">
+        <div className="flex items-center gap-3 px-4 sm:px-6 lg:px-8 py-3 bg-white border-b border-slate-200 shadow-xs">
           <button 
             onClick={() => setActiveApp(null)}
-            className="flex items-center justify-center w-9 h-9 rounded-xl bg-[var(--pastel-accent-soft)] hover:bg-[var(--pastel-accent)]/30 transition-colors duration-200"
+            className="flex items-center justify-center w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors duration-200 cursor-pointer"
             title="홈으로"
           >
-            <Home className="w-5 h-5 text-[var(--pastel-accent)]" />
+            <Home className="w-5 h-5" />
           </button>
           <button 
             onClick={() => setActiveApp(null)}
-            className="flex items-center justify-center w-9 h-9 rounded-xl bg-[var(--pastel-accent-soft)] hover:bg-[var(--pastel-accent)]/30 transition-colors duration-200"
+            className="flex items-center justify-center w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors duration-200 cursor-pointer"
             title="뒤로가기"
           >
-            <ArrowLeft className="w-5 h-5 text-[var(--pastel-accent)]" />
+            <ArrowLeft className="w-5 h-5" />
           </button>
-          <span className="text-base font-bold text-[var(--pastel-fg)]">
+          <span className="text-base font-bold text-slate-900">
             {activeApp === "social-quiz" && "🏛️ 중3 사회 단원별 개념 퀴즈"}
             {activeApp === "social-picker" && "🎯 발표자 랜덤 추첨기"}
             {activeApp === "human-rights" && "⚖️ 인권구제 가이드 & 시뮬레이터"}
             {activeApp === "quiz" && "🎮 역사 퀴즈"}
             {activeApp === "explore" && "📚 학습 백과"}
             {activeApp === "review" && "📝 복습 노트"}
-            {activeApp === "theme" && "🎨 배경 설정"}
             {activeApp === "about" && "ℹ️ 소개"}
           </span>
         </div>
@@ -139,13 +139,6 @@ export default function HomePage() {
             {activeApp === "quiz" && <QuizGame />}
             {activeApp === "explore" && <ExploreApp onClose={() => setActiveApp(null)} />}
             {activeApp === "review" && <ReviewApp onClose={() => setActiveApp(null)} />}
-            {activeApp === "theme" && (
-              <ThemeApp 
-                onClose={() => setActiveApp(null)} 
-                currentWallpaper={wallpaper}
-                onSelectWallpaper={setWallpaper}
-              />
-            )}
             {activeApp === "about" && <AboutApp onClose={() => setActiveApp(null)} />}
           </div>
         </div>
@@ -153,67 +146,84 @@ export default function HomePage() {
     );
   }
 
-  // 홈 대시보드 (Claymorphism Style)
+  // 메인 대시보드
   return (
-    <div className="flex-1 flex flex-col relative overflow-hidden bg-[linear-gradient(135deg,#fff8f3_0%,#f5e9df_50%,#fbf0e8_100%)] min-h-[calc(100vh-4rem)]">
+    <div className="flex-1 flex flex-col relative bg-slate-50/70 min-h-[calc(100vh-4rem)]">
       
-      {/* 배경 3D Clay 볼륨 장식 요소 */}
-      <div className="absolute top-10 left-10 w-48 h-48 rounded-full bg-pink-200/30 blur-2xl pointer-events-none animate-float" />
-      <div className="absolute bottom-10 right-10 w-64 h-64 rounded-full bg-purple-200/30 blur-3xl pointer-events-none animate-float" style={{ animationDelay: '1.5s' }} />
-      <div className={`absolute inset-0 opacity-10 pointer-events-none ${selectedWallpaper.className}`} />
-
       {/* 메인 콘텐츠 */}
-      <div className="relative flex-1 flex flex-col items-center justify-center px-4 sm:px-8 lg:px-12 py-10 sm:py-16">
+      <div className="relative flex-1 flex flex-col items-center justify-center px-4 sm:px-8 lg:px-12 py-10 sm:py-14 max-w-6xl mx-auto w-full space-y-10">
         
-        {/* Claymorphism 히어로 배너 */}
-        <div className="text-center mb-10 sm:mb-14 animate-fadeIn space-y-3 max-w-lg">
-          <div className="inline-flex items-center gap-2 px-4 py-2 clay-pill text-xs sm:text-sm font-extrabold text-amber-800">
-            <span className="text-base animate-bounce">🎓</span>
-            <span>수연쌤의 파스텔 입체 학습 아카데미</span>
+        {/* 메인 히어로 헤더 */}
+        <div className="text-center animate-fadeIn space-y-3 max-w-2xl">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-xs sm:text-sm font-extrabold text-indigo-700 shadow-xs">
+            <Sparkles className="w-4 h-4 text-indigo-600" />
+            <span>수연쌤의 사회·역사 학습 아카데미</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-800 tracking-tight leading-tight">
-            어서 오세요! <span className="inline-block animate-wave">👋</span>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+            사회 & 역사 재미있게 공부해요! 🎓
           </h1>
 
-          <p className="text-sm sm:text-base font-semibold text-slate-600/90 leading-relaxed">
-            클레이모피즘 3D 인터랙티브 메뉴를 클릭해 신나게 공부를 시작해봐요!
+          <p className="text-sm sm:text-base font-semibold text-slate-600 leading-relaxed">
+            필요한 학습 주제 폴더를 선택하면 원하는 학습 서비스로 바로 연결됩니다.
           </p>
         </div>
 
-        {/* Claymorphism 메뉴 카드 그리드 */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 w-full max-w-5xl mx-auto animate-slideUp">
-          {menuItems.map((item, index) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveApp(item.id)}
-              className="clay-card group flex flex-col items-center gap-4 p-6 sm:p-8 cursor-pointer relative"
-              style={{ animationDelay: `${index * 70}ms` }}
+        {/* 카테고리 폴더 세션 그리드 */}
+        <div className="w-full space-y-8 animate-slideUp">
+          {menuCategories.map((sec, secIdx) => (
+            <div
+              key={secIdx}
+              className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-5"
             >
-              {/* 3D Clay 입체 아이콘 박스 */}
-              <div className={`w-20 h-20 sm:w-24 sm:h-24 clay-icon bg-gradient-to-br ${item.gradient} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                <span className="text-4xl sm:text-5xl drop-shadow-md select-none">{item.emoji}</span>
+              {/* 카테고리 타이틀 */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center font-bold">
+                    <FolderOpen className="w-5 h-5 text-indigo-600" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-black text-slate-900">{sec.categoryName}</h2>
+                    <p className="text-xs text-slate-500">{sec.categoryDesc}</p>
+                  </div>
+                </div>
               </div>
 
-              {/* 메뉴 타이틀 */}
-              <span className="text-base sm:text-lg font-black text-slate-800 tracking-tight text-center">
-                {item.label}
-              </span>
+              {/* 카테고리 아이템 카드 그리드 */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                {sec.items.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveApp(item.id)}
+                    className="group bg-slate-50 hover:bg-white p-5 rounded-2xl border border-slate-200/80 hover:border-indigo-300 shadow-xs hover:shadow-md transition-all duration-300 text-left flex items-start gap-4 cursor-pointer hover:-translate-y-1"
+                  >
+                    {/* 아이콘 */}
+                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${item.gradient} text-white flex items-center justify-center shadow-sm shrink-0 text-2xl group-hover:scale-105 transition-transform`}>
+                      <span>{item.emoji}</span>
+                    </div>
 
-              {/* 서브 설명 */}
-              <span className="text-xs font-semibold text-slate-500 text-center leading-snug">
-                {item.description}
-              </span>
-            </button>
+                    {/* 내용 */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-extrabold text-slate-900 text-base mb-1 group-hover:text-indigo-600 transition-colors">
+                        {item.label}
+                      </h3>
+                      <p className="text-xs text-slate-500 leading-snug line-clamp-2">
+                        {item.description}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+            </div>
           ))}
         </div>
 
-        {/* 하단 안내 텍스트 */}
-        <div className="mt-12 sm:mt-16 text-center animate-fadeIn">
-          <p className="text-xs sm:text-sm font-bold text-slate-400/80 bg-white/50 px-5 py-2 rounded-full backdrop-blur-xs border border-white/60 shadow-xs inline-block">
-            ✨ 각 메뉴를 클릭하면 해당 학습 서비스로 즉시 이동합니다
-          </p>
+        {/* 하단 안내 */}
+        <div className="text-center text-xs text-slate-400 py-4">
+          <p>🎓 수연쌤의 사회·역사 학습 아카데미 | 즐거운 학교 수업 도우미</p>
         </div>
+
       </div>
     </div>
   );
