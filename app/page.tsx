@@ -4,6 +4,7 @@ import { useState } from "react";
 import QuizGame from "@/components/QuizGame";
 import HumanRightsGuide from "@/components/HumanRightsGuide";
 import SocialPresentationPicker from "@/components/SocialPresentationPicker";
+import SocialQuizGame from "@/components/SocialQuizGame";
 import { 
   ExploreApp, 
   ReviewApp, 
@@ -20,17 +21,27 @@ import {
   Home,
   ArrowLeft,
   Scale,
-  Dice5
+  Dice5,
+  GraduationCap
 } from "lucide-react";
 
 export default function HomePage() {
-  const [activeApp, setActiveApp] = useState<"quiz" | "human-rights" | "social-picker" | "explore" | "review" | "theme" | "about" | null>(null);
+  const [activeApp, setActiveApp] = useState<"quiz" | "social-quiz" | "human-rights" | "social-picker" | "explore" | "review" | "theme" | "about" | null>(null);
   const [wallpaper, setWallpaper] = useState<WallpaperId>("lavender");
 
   const selectedWallpaper = WALLPAPER_OPTIONS.find((wp) => wp.id === wallpaper) || WALLPAPER_OPTIONS[0];
 
   // 메뉴 아이콘 데이터
   const menuItems = [
+    {
+      id: "social-quiz" as const,
+      label: "사회 퀴즈",
+      emoji: "🏛️",
+      icon: GraduationCap,
+      gradient: "from-[#b5c6f0] to-[#8090e0]",
+      shadow: "shadow-indigo-200/50",
+      description: "중3 사회 1~3단원 개념 퀴즈!",
+    },
     {
       id: "social-picker" as const,
       label: "발표자 추첨기",
@@ -108,6 +119,7 @@ export default function HomePage() {
             <ArrowLeft className="w-5 h-5 text-[var(--pastel-accent)]" />
           </button>
           <span className="text-base font-bold text-[var(--pastel-fg)]">
+            {activeApp === "social-quiz" && "🏛️ 중3 사회 단원별 개념 퀴즈"}
             {activeApp === "social-picker" && "🎯 발표자 랜덤 추첨기"}
             {activeApp === "human-rights" && "⚖️ 인권구제 가이드 & 시뮬레이터"}
             {activeApp === "quiz" && "🎮 역사 퀴즈"}
@@ -121,6 +133,7 @@ export default function HomePage() {
         {/* 앱 콘텐츠 */}
         <div className="flex-1 overflow-y-auto">
           <div className="mx-auto max-w-6xl">
+            {activeApp === "social-quiz" && <SocialQuizGame />}
             {activeApp === "social-picker" && <SocialPresentationPicker />}
             {activeApp === "human-rights" && <HumanRightsGuide />}
             {activeApp === "quiz" && <QuizGame />}

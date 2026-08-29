@@ -46,6 +46,12 @@ export default function Header() {
             홈
           </Link>
           <Link 
+            href="/social-quiz" 
+            className="text-sm font-medium text-[var(--pastel-fg)]/80 hover:text-[var(--pastel-accent)] transition-colors duration-200 flex items-center gap-1"
+          >
+            <span>🏛️ 사회 퀴즈</span>
+          </Link>
+          <Link 
             href="/social-picker" 
             className="text-sm font-medium text-[var(--pastel-fg)]/80 hover:text-[var(--pastel-accent)] transition-colors duration-200 flex items-center gap-1"
           >
@@ -106,6 +112,13 @@ export default function Header() {
               onClick={() => setIsMenuOpen(false)}
             >
               🏠 홈
+            </Link>
+            <Link
+              href="/social-quiz"
+              className="block rounded-xl px-3 py-2.5 text-base font-medium text-[var(--pastel-fg)]/80 hover:bg-[var(--pastel-accent-soft)]"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              🏛️ 사회 퀴즈
             </Link>
             <Link
               href="/social-picker"
