@@ -28,19 +28,19 @@ import {
 export default function HomePage() {
   const [activeApp, setActiveApp] = useState<"quiz" | "social-quiz" | "human-rights" | "social-picker" | "activity-tracker" | "explore" | "review" | "about" | null>(null);
 
-  // 카테고리 폴더별 메뉴 데이터
+  // 카테고리 폴더별 메뉴 데이터 (Neo-Brutalism Color Mapping)
   const menuCategories = [
     {
       categoryName: "🏛️ 사회",
       categoryDesc: "2015 개정 교육과정 사회 개념 학습 및 인권 구제 가이드",
-      badgeColor: "bg-blue-100 text-blue-800 border-blue-200",
+      categoryBg: "bg-[#ffde59]", // Yellow
       items: [
         {
           id: "human-rights" as const,
           label: "인권구제 가이드",
           emoji: "⚖️",
           icon: Scale,
-          gradient: "from-blue-500 to-indigo-600",
+          solidBg: "bg-[#5ce1e6]", // Cyan
           description: "인권 침해 상황별 구제 기관 시뮬레이터",
         },
         {
@@ -48,7 +48,7 @@ export default function HomePage() {
           label: "사회 퀴즈",
           emoji: "🏛️",
           icon: GraduationCap,
-          gradient: "from-indigo-500 to-purple-600",
+          solidBg: "bg-[#ff66c4]", // Pink
           description: "중3 사회 1~3단원 핵심 개념 퀴즈",
         },
       ],
@@ -56,14 +56,14 @@ export default function HomePage() {
     {
       categoryName: "📜 역사",
       categoryDesc: "조선 시대를 탐구하는 재미있는 역사 퀴즈 및 백과사전",
-      badgeColor: "bg-purple-100 text-purple-800 border-purple-200",
+      categoryBg: "bg-[#5ce1e6]", // Cyan
       items: [
         {
           id: "quiz" as const,
           label: "역사 퀴즈",
           emoji: "🎮",
           icon: Gamepad2,
-          gradient: "from-purple-500 to-pink-600",
+          solidBg: "bg-[#7ed957]", // Lime Green
           description: "조선 전기·후기 역사 퀴즈 & 리더보드",
         },
         {
@@ -71,7 +71,7 @@ export default function HomePage() {
           label: "학습 백과",
           emoji: "📚",
           icon: BookOpen,
-          gradient: "from-amber-400 to-orange-500",
+          solidBg: "bg-[#ff914d]", // Orange
           description: "조선 시대 핵심 역사 사건과 인물 탐구",
         },
         {
@@ -79,7 +79,7 @@ export default function HomePage() {
           label: "복습 노트",
           emoji: "📝",
           icon: BookMarked,
-          gradient: "from-emerald-500 to-teal-600",
+          solidBg: "bg-[#ffde59]", // Yellow
           description: "핵심 낱말 카드 및 나만의 요점 정리",
         },
       ],
@@ -87,14 +87,14 @@ export default function HomePage() {
     {
       categoryName: "🛠️ 학습 도구",
       categoryDesc: "수업 시간에 활용하는 유용한 발표 및 학습 도구",
-      badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200",
+      categoryBg: "bg-[#7ed957]", // Lime Green
       items: [
         {
           id: "activity-tracker" as const,
           label: "활동 기록 관리",
           emoji: "📊",
           icon: BarChart3,
-          gradient: "from-emerald-500 to-teal-600",
+          solidBg: "bg-[#c892ff]", // Purple
           description: "학급 명렬표 연동 학생 활동 점수 & 게이지 바 관리",
         },
         {
@@ -102,7 +102,7 @@ export default function HomePage() {
           label: "발표자 추첨기",
           emoji: "🎯",
           icon: Dice5,
-          gradient: "from-rose-400 to-amber-500",
+          solidBg: "bg-[#ff5757]", // Red
           description: "학급 명렬표 연동 사회 수업 발표자 랜덤 추첨",
         },
       ],
@@ -113,23 +113,23 @@ export default function HomePage() {
   if (activeApp !== null) {
     return (
       <div className="flex-1 flex flex-col animate-fadeIn">
-        {/* 앱 상단 내비게이션 바 */}
-        <div className="flex items-center gap-3 px-4 sm:px-6 lg:px-8 py-3 bg-white border-b border-slate-200 shadow-xs">
+        {/* 앱 상단 내비게이션 바 (Neo-Brutalism Style) */}
+        <div className="flex items-center gap-3 px-4 sm:px-6 lg:px-8 py-3.5 bg-white border-b-4 border-black shadow-[0_4px_0_0_#000]">
           <button 
             onClick={() => setActiveApp(null)}
-            className="flex items-center justify-center w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors duration-200 cursor-pointer"
+            className="flex items-center justify-center w-10 h-10 bg-[#ffde59] border-3 border-black shadow-[3px_3px_0px_0px_#000] hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-[1px] active:translate-y-[1px] font-black cursor-pointer"
             title="홈으로"
           >
-            <Home className="w-5 h-5" />
+            <Home className="w-5 h-5 text-black" />
           </button>
           <button 
             onClick={() => setActiveApp(null)}
-            className="flex items-center justify-center w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors duration-200 cursor-pointer"
+            className="flex items-center justify-center w-10 h-10 bg-white border-3 border-black shadow-[3px_3px_0px_0px_#000] hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-[1px] active:translate-y-[1px] font-black cursor-pointer"
             title="뒤로가기"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5 text-black" />
           </button>
-          <span className="text-base font-bold text-slate-900">
+          <span className="text-base sm:text-lg font-black text-black tracking-tight">
             {activeApp === "activity-tracker" && "📊 학급 활동 기록 및 점수 관리"}
             {activeApp === "social-quiz" && "🏛️ 중3 사회 단원별 개념 퀴즈"}
             {activeApp === "social-picker" && "🎯 발표자 랜덤 추첨기"}
@@ -158,68 +158,68 @@ export default function HomePage() {
     );
   }
 
-  // 메인 대시보드
+  // 메인 대시보드 (Neo-Brutalism Style)
   return (
-    <div className="flex-1 flex flex-col relative bg-slate-50/70 min-h-[calc(100vh-4rem)]">
+    <div className="flex-1 flex flex-col relative bg-[#fffdf8] min-h-[calc(100vh-4rem)] border-b-4 border-black">
       
       {/* 메인 콘텐츠 */}
-      <div className="relative flex-1 flex flex-col items-center justify-center px-4 sm:px-8 lg:px-12 py-10 sm:py-14 max-w-6xl mx-auto w-full space-y-10">
+      <div className="relative flex-1 flex flex-col items-center justify-center px-4 sm:px-8 lg:px-12 py-10 sm:py-16 max-w-6xl mx-auto w-full space-y-12">
         
-        {/* 메인 히어로 헤더 */}
-        <div className="text-center animate-fadeIn space-y-3 max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-xs sm:text-sm font-extrabold text-indigo-700 shadow-xs">
-            <Sparkles className="w-4 h-4 text-indigo-600" />
+        {/* Neo-Brutalism 히어로 큼직한 대표 블록 */}
+        <div className="w-full bg-[#ffde59] border-4 border-black shadow-[8px_8px_0px_0px_#000] p-8 sm:p-12 text-center animate-fadeIn space-y-4 rounded-2xl relative overflow-hidden">
+          
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#ff66c4] border-2 border-black font-black text-xs sm:text-sm text-black shadow-[3px_3px_0px_0px_#000] uppercase tracking-wider">
+            <Sparkles className="w-4 h-4 text-black" />
             <span>수연쌤의 사회·역사 학습 아카데미</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-            사회 & 역사 재미있게 공부해요! 🎓
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-black tracking-tight leading-none uppercase">
+            사회 & 역사 파괴적 정복! 🎓
           </h1>
 
-          <p className="text-sm sm:text-base font-semibold text-slate-600 leading-relaxed">
-            필요한 학습 주제 폴더를 선택하면 원하는 학습 서비스로 바로 연결됩니다.
+          <p className="text-base sm:text-lg font-bold text-black max-w-2xl mx-auto leading-relaxed">
+            필요한 단원 및 학습 도구 블록을 터치하여 바로 학습을 시작해보세요.
           </p>
+
         </div>
 
-        {/* 카테고리 폴더 세션 그리드 */}
-        <div className="w-full space-y-8 animate-slideUp">
+        {/* 카테고리 폴더 블록 세션 그리드 */}
+        <div className="w-full space-y-10 animate-slideUp">
           {menuCategories.map((sec, secIdx) => (
             <div
               key={secIdx}
-              className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-5"
+              className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_#000] rounded-2xl p-6 sm:p-8 space-y-6"
             >
-              {/* 카테고리 타이틀 */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-100">
+              {/* 카테고리 헤더 */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b-4 border-black">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center font-bold">
-                    <FolderOpen className="w-5 h-5 text-indigo-600" />
+                  <div className={`px-4 py-2 ${sec.categoryBg} border-3 border-black shadow-[4px_4px_0px_0px_#000] font-black text-lg text-black flex items-center gap-2`}>
+                    <FolderOpen className="w-5 h-5 text-black" />
+                    <span>{sec.categoryName}</span>
                   </div>
-                  <div>
-                    <h2 className="text-lg font-black text-slate-900">{sec.categoryName}</h2>
-                    <p className="text-xs text-slate-500">{sec.categoryDesc}</p>
-                  </div>
+                  <p className="text-xs sm:text-sm font-bold text-slate-700">{sec.categoryDesc}</p>
                 </div>
               </div>
 
-              {/* 카테고리 아이템 카드 그리드 */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {/* 카테고리 아이템 카드 그리드 (Neo-Brutalism Cards) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {sec.items.map((item) => (
                   <button
                     key={item.id}
                     onClick={() => setActiveApp(item.id)}
-                    className="group bg-slate-50 hover:bg-white p-5 rounded-2xl border border-slate-200/80 hover:border-indigo-300 shadow-xs hover:shadow-md transition-all duration-300 text-left flex items-start gap-4 cursor-pointer hover:-translate-y-1"
+                    className="group bg-white hover:bg-[#fff9e6] p-5 border-3 border-black shadow-[5px_5px_0px_0px_#000] hover:shadow-[8px_8px_0px_0px_#000] hover:translate-x-[-3px] hover:translate-y-[-3px] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_#000] transition-all duration-150 text-left flex items-start gap-4 cursor-pointer rounded-xl"
                   >
-                    {/* 아이콘 */}
-                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${item.gradient} text-white flex items-center justify-center shadow-sm shrink-0 text-2xl group-hover:scale-105 transition-transform`}>
-                      <span>{item.emoji}</span>
+                    {/* 아이콘 원색 강렬 블록 */}
+                    <div className={`w-14 h-14 rounded-xl ${item.solidBg} border-3 border-black shadow-[3px_3px_0px_0px_#000] flex items-center justify-center shrink-0 text-2xl group-hover:scale-105 transition-transform`}>
+                      <span className="select-none">{item.emoji}</span>
                     </div>
 
                     {/* 내용 */}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-extrabold text-slate-900 text-base mb-1 group-hover:text-indigo-600 transition-colors">
+                      <h3 className="font-black text-black text-base sm:text-lg mb-1 tracking-tight">
                         {item.label}
                       </h3>
-                      <p className="text-xs text-slate-500 leading-snug line-clamp-2">
+                      <p className="text-xs font-bold text-slate-700 leading-snug line-clamp-2">
                         {item.description}
                       </p>
                     </div>
@@ -232,8 +232,8 @@ export default function HomePage() {
         </div>
 
         {/* 하단 안내 */}
-        <div className="text-center text-xs text-slate-400 py-4">
-          <p>🎓 수연쌤의 사회·역사 학습 아카데미 | 즐거운 학교 수업 도우미</p>
+        <div className="text-center text-xs font-black text-black bg-[#ffde59] border-3 border-black shadow-[4px_4px_0px_0px_#000] px-6 py-2.5 rounded-xl">
+          <p>🎓 NEOBRUTALISM HIGH-CONTRAST LEARNING HUB | 수연쌤의 사회·역사 아카데미</p>
         </div>
 
       </div>
