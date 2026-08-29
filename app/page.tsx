@@ -153,47 +153,55 @@ export default function HomePage() {
     );
   }
 
-  // 홈 대시보드
+  // 홈 대시보드 (Claymorphism Style)
   return (
-    <div className="flex-1 flex flex-col">
-      {/* 배경 그라디언트 (선택한 배경화면 반영) */}
+    <div className="flex-1 flex flex-col relative overflow-hidden bg-[linear-gradient(135deg,#fff8f3_0%,#f5e9df_50%,#fbf0e8_100%)] min-h-[calc(100vh-4rem)]">
+      
+      {/* 배경 3D Clay 볼륨 장식 요소 */}
+      <div className="absolute top-10 left-10 w-48 h-48 rounded-full bg-pink-200/30 blur-2xl pointer-events-none animate-float" />
+      <div className="absolute bottom-10 right-10 w-64 h-64 rounded-full bg-purple-200/30 blur-3xl pointer-events-none animate-float" style={{ animationDelay: '1.5s' }} />
       <div className={`absolute inset-0 opacity-10 pointer-events-none ${selectedWallpaper.className}`} />
 
       {/* 메인 콘텐츠 */}
-      <div className="relative flex-1 flex flex-col items-center justify-center px-4 sm:px-8 lg:px-12 py-8 sm:py-12">
+      <div className="relative flex-1 flex flex-col items-center justify-center px-4 sm:px-8 lg:px-12 py-10 sm:py-16">
         
-        {/* 환영 메시지 */}
-        <div className="text-center mb-8 sm:mb-12 animate-fadeIn">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[var(--pastel-fg)] mb-3 tracking-tight">
-            어서 오세요! 👋
+        {/* Claymorphism 히어로 배너 */}
+        <div className="text-center mb-10 sm:mb-14 animate-fadeIn space-y-3 max-w-lg">
+          <div className="inline-flex items-center gap-2 px-4 py-2 clay-pill text-xs sm:text-sm font-extrabold text-amber-800">
+            <span className="text-base animate-bounce">🎓</span>
+            <span>수연쌤의 파스텔 입체 학습 아카데미</span>
+          </div>
+
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-800 tracking-tight leading-tight">
+            어서 오세요! <span className="inline-block animate-wave">👋</span>
           </h1>
-          <p className="text-base sm:text-lg text-[var(--pastel-fg)]/60 max-w-md mx-auto">
-            수연쌤의 아카데미에서 즐겁게 공부해봐요!
+
+          <p className="text-sm sm:text-base font-semibold text-slate-600/90 leading-relaxed">
+            클레이모피즘 3D 인터랙티브 메뉴를 클릭해 신나게 공부를 시작해봐요!
           </p>
         </div>
 
-        {/* 아이콘 메뉴 그리드 - 태블릿/데스크톱 최적화 */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 sm:gap-8 lg:gap-10 w-full max-w-3xl mx-auto animate-slideUp">
+        {/* Claymorphism 메뉴 카드 그리드 */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 w-full max-w-5xl mx-auto animate-slideUp">
           {menuItems.map((item, index) => (
             <button
               key={item.id}
               onClick={() => setActiveApp(item.id)}
-              className="group flex flex-col items-center gap-3 sm:gap-4 p-5 sm:p-6 lg:p-8 rounded-[var(--radius-card)] bg-[var(--pastel-card)] border border-[var(--pastel-border)] hover:border-[var(--pastel-accent)]/40 transition-all duration-300 hover:scale-[1.03] hover:-translate-y-1 active:scale-95"
-              style={{
-                boxShadow: '0 4px 20px var(--pastel-shadow)',
-                animationDelay: `${index * 80}ms`,
-              }}
+              className="clay-card group flex flex-col items-center gap-4 p-6 sm:p-8 cursor-pointer relative"
+              style={{ animationDelay: `${index * 70}ms` }}
             >
-              {/* 아이콘 */}
-              <div className={`w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-[var(--radius-icon)] bg-gradient-to-br ${item.gradient} flex items-center justify-center ${item.shadow} shadow-lg group-hover:scale-105 transition-transform duration-300`}>
-                <span className="text-3xl sm:text-4xl lg:text-5xl">{item.emoji}</span>
+              {/* 3D Clay 입체 아이콘 박스 */}
+              <div className={`w-20 h-20 sm:w-24 sm:h-24 clay-icon bg-gradient-to-br ${item.gradient} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                <span className="text-4xl sm:text-5xl drop-shadow-md select-none">{item.emoji}</span>
               </div>
-              {/* 라벨 */}
-              <span className="text-sm sm:text-base lg:text-lg font-bold text-[var(--pastel-fg)] tracking-tight">
+
+              {/* 메뉴 타이틀 */}
+              <span className="text-base sm:text-lg font-black text-slate-800 tracking-tight text-center">
                 {item.label}
               </span>
-              {/* 설명 (태블릿 이상에서만) */}
-              <span className="hidden sm:block text-xs lg:text-sm text-[var(--pastel-fg)]/40 text-center leading-snug">
+
+              {/* 서브 설명 */}
+              <span className="text-xs font-semibold text-slate-500 text-center leading-snug">
                 {item.description}
               </span>
             </button>
@@ -201,9 +209,9 @@ export default function HomePage() {
         </div>
 
         {/* 하단 안내 텍스트 */}
-        <div className="mt-8 sm:mt-12 text-center animate-fadeIn">
-          <p className="text-sm text-[var(--pastel-fg)]/30">
-            메뉴를 클릭하면 학습이 시작됩니다 ✨
+        <div className="mt-12 sm:mt-16 text-center animate-fadeIn">
+          <p className="text-xs sm:text-sm font-bold text-slate-400/80 bg-white/50 px-5 py-2 rounded-full backdrop-blur-xs border border-white/60 shadow-xs inline-block">
+            ✨ 각 메뉴를 클릭하면 해당 학습 서비스로 즉시 이동합니다
           </p>
         </div>
       </div>
