@@ -10,8 +10,11 @@ import {
   Sparkles, 
   RotateCcw, 
   ChevronRight, 
+  ChevronDown,
   FileText, 
-  History
+  History,
+  Edit3,
+  Check
 } from "lucide-react";
 
 // --- ROSTER DATA STRUCTURE ---
@@ -124,6 +127,17 @@ export default function StudentActivityTracker() {
     }
   });
 
+  // Teacher per-student memo map: `1-1_1` -> string
+  const [memosMap, setMemosMap] = useState<Record<string, string>>(() => {
+    if (typeof window === "undefined") return {};
+    try {
+      const savedMemos = localStorage.getItem("suyeon_activity_memos_v1");
+      return savedMemos ? JSON.parse(savedMemos) : {};
+    } catch {
+      return {};
+    }
+  });
+
   // Search & Sorting
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortBy, setSortBy] = useState<"num" | "score" | "name">("num");
@@ -131,19 +145,33 @@ export default function StudentActivityTracker() {
   // Selection for batch actions
   const [selectedNums, setSelectedNums] = useState<Set<number>>(new Set());
 
-  // Quick preset bar
+  // Quick preset bar & custom per-student input
   const [quickReasonInput, setQuickReasonInput] = useState<string>("2p 형성 1번");
+  
+  // Expanded student row number (for viewing timestamped history dropdown)
+  const [expandedNum, setExpandedNum] = useState<number | null>(null);
 
-  // Detail Modal for single student
+  // Custom reason modal for single student
+  const [customReasonModal, setCustomReasonModal] = useState<{ num: number; name: string; change: number } | null>(null);
+  const [modalReasonText, setModalReasonText] = useState<string>("");
+
+  // Detail Modal for single student history
   const [selectedStudentForModal, setSelectedStudentForModal] = useState<{ num: number; name: string } | null>(null);
 
   // Save to LocalStorage
-  const saveCurrentData = (newScores: Record<string, StudentScoreData>, newLogs: LogEntry[]) => {
+  const saveCurrentData = (
+    newScores: Record<string, StudentScoreData>, 
+    newLogs: LogEntry[], 
+    newMemos?: Record<string, string>
+  ) => {
     setScoresMap(newScores);
     setLogs(newLogs);
+    if (newMemos) setMemosMap(newMemos);
+
     try {
       localStorage.setItem("suyeon_activity_scores_v1", JSON.stringify(newScores));
       localStorage.setItem("suyeon_activity_logs_v1", JSON.stringify(newLogs));
+      if (newMemos) localStorage.setItem("suyeon_activity_memos_v1", JSON.stringify(newMemos));
     } catch {
       // Fallback
     }
@@ -155,6 +183,24 @@ export default function StudentActivityTracker() {
   const getStudentScoreData = (num: number): StudentScoreData => {
     const key = `${selectedClassKey}_${num}`;
     return scoresMap[key] || { score: 0, recordCount: 0, latestReason: "-" };
+  };
+
+  // Helper memo getter
+  const getStudentMemo = (num: number): string => {
+    const key = `${selectedClassKey}_${num}`;
+    return memosMap[key] || "";
+  };
+
+  // Update memo function
+  const handleMemoChange = (num: number, text: string) => {
+    const key = `${selectedClassKey}_${num}`;
+    const updated = { ...memosMap, [key]: text };
+    setMemosMap(updated);
+    try {
+      localStorage.setItem("suyeon_activity_memos_v1", JSON.stringify(updated));
+    } catch {
+      // Fallback
+    }
   };
 
   // Add Point Function
@@ -171,6 +217,8 @@ export default function StudentActivityTracker() {
     const updatedScores = { ...scoresMap };
     const newLogsList: LogEntry[] = [...logs];
 
+    const defaultReason = reasonText.trim() || (changeVal >= 0 ? `+${changeVal}점` : `${changeVal}점`);
+
     nums.forEach((num) => {
       const key = `${selectedClassKey}_${num}`;
       const prev = updatedScores[key] || { score: 0, recordCount: 0, latestReason: "-" };
@@ -180,7 +228,7 @@ export default function StudentActivityTracker() {
       updatedScores[key] = {
         score: newScore,
         recordCount: prev.recordCount + 1,
-        latestReason: reasonText.trim() || (changeVal >= 0 ? `+${changeVal}점` : `${changeVal}점`)
+        latestReason: defaultReason
       };
 
       newLogsList.unshift({
@@ -189,7 +237,7 @@ export default function StudentActivityTracker() {
         num,
         studentName: sName,
         change: changeVal,
-        reason: reasonText.trim() || "활동 기록",
+        reason: defaultReason,
         dateStr
       });
     });
@@ -221,14 +269,19 @@ export default function StudentActivityTracker() {
     const list = Object.entries(currentClassObj.names).map(([numStr, name]) => {
       const num = Number(numStr);
       const scoreData = getStudentScoreData(num);
-      return { num, name, ...scoreData };
+      const memo = getStudentMemo(num);
+      return { num, name, memo, ...scoreData };
     });
 
     // Filter search
     const filtered = list.filter((item) => {
       if (!searchQuery.trim()) return true;
       const q = searchQuery.trim().toLowerCase();
-      return item.name.toLowerCase().includes(q) || String(item.num).includes(q);
+      return (
+        item.name.toLowerCase().includes(q) || 
+        String(item.num).includes(q) || 
+        item.memo.toLowerCase().includes(q)
+      );
     });
 
     // Sort
@@ -246,13 +299,15 @@ export default function StudentActivityTracker() {
 
   // Clear data
   const handleResetClassData = () => {
-    if (confirm(`[${selectedClassKey}반]의 모든 학생 점수와 활동 기록을 초기화하시겠습니까?`)) {
+    if (confirm(`[${selectedClassKey}반]의 모든 학생 점수, 활동 기록, 메모를 초기화하시겠습니까?`)) {
       const updatedScores = { ...scoresMap };
+      const updatedMemos = { ...memosMap };
       Object.keys(currentClassObj.names).forEach((numStr) => {
         delete updatedScores[`${selectedClassKey}_${numStr}`];
+        delete updatedMemos[`${selectedClassKey}_${numStr}`];
       });
       const updatedLogs = logs.filter((l) => l.classKey !== selectedClassKey);
-      saveCurrentData(updatedScores, updatedLogs);
+      saveCurrentData(updatedScores, updatedLogs, updatedMemos);
       setSelectedNums(new Set());
     }
   };
@@ -282,6 +337,7 @@ export default function StudentActivityTracker() {
                 onClick={() => {
                   setSelectedClassKey(cls.key);
                   setSelectedNums(new Set());
+                  setExpandedNum(null);
                 }}
                 className={`px-4 py-2 rounded-2xl text-xs sm:text-sm font-extrabold transition-all duration-200 flex items-center gap-2 shrink-0 border cursor-pointer ${
                   isSelected
@@ -381,7 +437,7 @@ export default function StudentActivityTracker() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="이름 또는 번호 검색"
+                  placeholder="이름/번호/메모 검색"
                   className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500 w-full sm:w-44"
                 />
               </div>
@@ -426,99 +482,185 @@ export default function StudentActivityTracker() {
                 </button>
                 <span>학생 요약 ({filteredStudentList.length}명)</span>
               </div>
-              <span className="text-[11px]">게이지 바를 터치하거나 + 버튼으로 점수를 부여하세요.</span>
+              <span className="text-[11px]">학생 이름/화살표( &gt; )를 누르면 시간별 누적 기록이 펼쳐집니다.</span>
             </div>
 
             {/* Student Table List */}
             <div className="divide-y divide-slate-100 border border-slate-200/80 rounded-2xl overflow-hidden bg-white shadow-2xs">
               
               {/* Header row */}
-              <div className="grid grid-cols-12 gap-2 p-3.5 bg-slate-50 text-[11px] font-extrabold text-slate-400">
+              <div className="grid grid-cols-12 gap-2 p-3.5 bg-slate-50 text-[11px] font-extrabold text-slate-400 items-center">
                 <div className="col-span-1 flex items-center justify-center">선택</div>
                 <div className="col-span-1">번호</div>
                 <div className="col-span-2">학생</div>
-                <div className="col-span-4">현재 점수 (게이지 바)</div>
-                <div className="col-span-1 text-center">기록</div>
-                <div className="col-span-2">최근 기록</div>
-                <div className="col-span-1 text-right pr-2">상세</div>
+                <div className="col-span-3">현재 점수 (게이지 바)</div>
+                <div className="col-span-2 text-center">점수 조절</div>
+                <div className="col-span-2">교사 메모 (저장)</div>
+                <div className="col-span-1 text-right pr-2">기록</div>
               </div>
 
               {/* Body rows */}
               {filteredStudentList.map((st) => {
                 const isChecked = selectedNums.has(st.num);
+                const isExpanded = expandedNum === st.num;
                 const scorePercent = Math.min(100, Math.max(5, (st.score / maxClassScore) * 100));
 
+                // Logs for this specific student
+                const studentLogs = logs.filter(
+                  (l) => l.classKey === selectedClassKey && l.num === st.num
+                );
+
                 return (
-                  <div
-                    key={st.num}
-                    className={`grid grid-cols-12 gap-2 p-3.5 items-center text-xs transition-colors hover:bg-purple-50/30 ${
-                      isChecked ? "bg-purple-50/50" : ""
-                    }`}
-                  >
-                    {/* Checkbox */}
-                    <div className="col-span-1 flex items-center justify-center">
-                      <button
-                        onClick={() => toggleSelectOne(st.num)}
-                        className="text-slate-400 hover:text-purple-600 cursor-pointer"
-                      >
-                        {isChecked ? (
-                          <CheckSquare className="w-4 h-4 text-purple-600" />
-                        ) : (
-                          <Square className="w-4 h-4 text-slate-300" />
-                        )}
-                      </button>
-                    </div>
+                  <React.Fragment key={st.num}>
+                    <div
+                      className={`grid grid-cols-12 gap-2 p-3.5 items-center text-xs transition-colors hover:bg-purple-50/30 ${
+                        isChecked ? "bg-purple-50/50" : ""
+                      }`}
+                    >
+                      {/* Checkbox */}
+                      <div className="col-span-1 flex items-center justify-center">
+                        <button
+                          onClick={() => toggleSelectOne(st.num)}
+                          className="text-slate-400 hover:text-purple-600 cursor-pointer"
+                        >
+                          {isChecked ? (
+                            <CheckSquare className="w-4 h-4 text-purple-600" />
+                          ) : (
+                            <Square className="w-4 h-4 text-slate-300" />
+                          )}
+                        </button>
+                      </div>
 
-                    {/* Number */}
-                    <div className="col-span-1 font-bold text-slate-500">
-                      {st.num}
-                    </div>
+                      {/* Number */}
+                      <div className="col-span-1 font-bold text-slate-500">
+                        {st.num}
+                      </div>
 
-                    {/* Name */}
-                    <div className="col-span-2 font-extrabold text-slate-900 flex items-center gap-1">
-                      <span>{st.name}</span>
-                      <ChevronRight className="w-3 h-3 text-slate-300" />
-                    </div>
+                      {/* Name & Toggle Arrow */}
+                      <div className="col-span-2 font-extrabold text-slate-900 flex items-center gap-1">
+                        <button
+                          onClick={() => setExpandedNum(isExpanded ? null : st.num)}
+                          className="flex items-center gap-1 hover:text-purple-600 cursor-pointer text-left"
+                        >
+                          <span>{st.name}</span>
+                          {isExpanded ? (
+                            <ChevronDown className="w-3.5 h-3.5 text-purple-600" />
+                          ) : (
+                            <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                          )}
+                        </button>
+                      </div>
 
-                    {/* Score Progress Bar (점수 게이지) */}
-                    <div className="col-span-4 flex items-center gap-3">
-                      <div className="flex-1 h-3.5 bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-200/60 relative">
-                        <div
-                          className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-teal-400 to-indigo-500 transition-all duration-500"
-                          style={{ width: `${scorePercent}%` }}
+                      {/* Score Progress Bar (점수 게이지) */}
+                      <div className="col-span-3 flex items-center gap-2.5">
+                        <div className="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-200/60 relative">
+                          <div
+                            className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-teal-400 to-indigo-500 transition-all duration-500"
+                            style={{ width: `${scorePercent}%` }}
+                          />
+                        </div>
+                        <span className="font-extrabold text-xs text-indigo-700 min-w-[28px] text-right">
+                          {st.score}점
+                        </span>
+                      </div>
+
+                      {/* Quick +1 / -1 buttons with custom note launcher */}
+                      <div className="col-span-2 flex items-center justify-center gap-1.5">
+                        <button
+                          onClick={() => addPointToStudents([st.num], 1, quickReasonInput || "활동 참여")}
+                          className="px-2.5 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 rounded-full font-black text-xs transition-transform active:scale-95 cursor-pointer shadow-2xs"
+                          title="점수 +1 (기본 사유)"
+                        >
+                          +1
+                        </button>
+                        
+                        <button
+                          onClick={() => addPointToStudents([st.num], -1, "감점 (-1)")}
+                          className="px-2.5 py-1 bg-rose-100 hover:bg-rose-200 text-rose-800 rounded-full font-black text-xs transition-transform active:scale-95 cursor-pointer shadow-2xs"
+                          title="점수 -1 (감점)"
+                        >
+                          -1
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            setCustomReasonModal({ num: st.num, name: st.name, change: 1 });
+                            setModalReasonText(quickReasonInput || "");
+                          }}
+                          className="p-1 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors cursor-pointer"
+                          title="사유 직접 쓰기 / 패스"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+
+                      {/* Teacher Memo input field (학생별 메모 저장 칸) */}
+                      <div className="col-span-2">
+                        <input
+                          type="text"
+                          value={st.memo}
+                          onChange={(e) => handleMemoChange(st.num, e.target.value)}
+                          placeholder="작은 메모 입력..."
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1 text-[11px] font-semibold text-slate-700 focus:outline-none focus:ring-1 focus:ring-purple-500 focus:bg-white"
                         />
                       </div>
-                      <span className="font-extrabold text-xs text-indigo-700 min-w-[32px] text-right">
-                        {st.score}점
-                      </span>
+
+                      {/* Detail History Popup button */}
+                      <div className="col-span-1 text-right pr-1">
+                        <button
+                          onClick={() => setSelectedStudentForModal({ num: st.num, name: st.name })}
+                          className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
+                          title="전체 기록 팝업"
+                        >
+                          <History className="w-4 h-4" />
+                        </button>
+                      </div>
+
                     </div>
 
-                    {/* Quick +1 / -1 buttons */}
-                    <div className="col-span-1 flex items-center justify-center gap-1">
-                      <button
-                        onClick={() => addPointToStudents([st.num], 1, quickReasonInput || "활동 참여")}
-                        className="px-2.5 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 rounded-full font-black text-xs transition-transform active:scale-95 cursor-pointer shadow-2xs"
-                      >
-                        +1
-                      </button>
-                    </div>
+                    {/* EXPANDED DROPDOWN TIMELINE (학생 화살표 누르면 펼쳐지는 시간별 기록) */}
+                    {isExpanded && (
+                      <div className="col-span-12 bg-purple-50/40 p-4 border-t border-b border-purple-100 space-y-2 animate-fadeIn">
+                        <div className="flex items-center justify-between text-xs font-bold text-purple-900 pb-1 border-b border-purple-200/60">
+                          <span>[{st.num}번 {st.name}] 시간별 누적 입력 기록</span>
+                          <span className="text-[11px] text-purple-600 font-normal">총 {studentLogs.length}건</span>
+                        </div>
 
-                    {/* Recent reason */}
-                    <div className="col-span-2 text-slate-600 font-medium text-xs truncate">
-                      {st.latestReason}
-                    </div>
-
-                    {/* Detail Popup trigger */}
-                    <div className="col-span-1 text-right pr-1">
-                      <button
-                        onClick={() => setSelectedStudentForModal({ num: st.num, name: st.name })}
-                        className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
-                      >
-                        <History className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                  </div>
+                        {studentLogs.length === 0 ? (
+                          <div className="text-xs text-purple-400 py-3 text-center">
+                            아직 기록된 일시별 점수 활동이 없습니다.
+                          </div>
+                        ) : (
+                          <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                            {studentLogs.map((lg) => (
+                              <div
+                                key={lg.id}
+                                className="bg-white p-2.5 rounded-xl border border-purple-100 flex items-center justify-between text-xs shadow-2xs"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <span className="text-[11px] font-semibold text-slate-400">
+                                    {lg.dateStr}
+                                  </span>
+                                  <span className="font-bold text-slate-800">
+                                    {lg.reason}
+                                  </span>
+                                </div>
+                                <span
+                                  className={`font-black text-xs px-2 py-0.5 rounded-md ${
+                                    lg.change >= 0
+                                      ? "bg-emerald-100 text-emerald-800"
+                                      : "bg-rose-100 text-rose-800"
+                                  }`}
+                                >
+                                  {lg.change >= 0 ? `+${lg.change}점` : `${lg.change}점`}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </React.Fragment>
                 );
               })}
 
@@ -598,15 +740,69 @@ export default function StudentActivityTracker() {
                 <div className="font-extrabold text-slate-900 text-sm group-hover:text-purple-600 transition-colors">
                   {st.name}
                 </div>
-                <div className="text-[10px] text-slate-400 font-medium truncate">
-                  기록 {st.recordCount}회
-                </div>
+                {st.memo ? (
+                  <div className="text-[10px] text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md font-semibold truncate">
+                    📝 {st.memo}
+                  </div>
+                ) : (
+                  <div className="text-[10px] text-slate-400 font-medium truncate">
+                    기록 {st.recordCount}회
+                  </div>
+                )}
               </button>
             ))}
           </div>
         )}
 
       </div>
+
+      {/* Custom Reason Modal (학생 개별 사유 작성 or 패스) */}
+      {customReasonModal && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 animate-fadeIn space-y-4">
+            <h3 className="text-base font-extrabold text-slate-900">
+              [{customReasonModal.num}번 {customReasonModal.name}] 점수 기록 내용 작성
+            </h3>
+            
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-500">
+                활동 사유 또는 메모를 입력하세요 (선택 사항)
+              </label>
+              <input
+                type="text"
+                value={modalReasonText}
+                onChange={(e) => setModalReasonText(e.target.value)}
+                placeholder="내용 입력 없이 패스 가능"
+                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                onClick={() => {
+                  // PASS button: Grant point with blank/default reason
+                  addPointToStudents([customReasonModal.num], customReasonModal.change, "활동 기록 (패스)");
+                  setCustomReasonModal(null);
+                }}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl cursor-pointer"
+              >
+                패스 (건너뛰기)
+              </button>
+              
+              <button
+                onClick={() => {
+                  addPointToStudents([customReasonModal.num], customReasonModal.change, modalReasonText || "활동 기록");
+                  setCustomReasonModal(null);
+                }}
+                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-xl flex items-center gap-1 cursor-pointer"
+              >
+                <Check className="w-3.5 h-3.5" />
+                <span>기록 저장</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Student History Detail Modal */}
       {selectedStudentForModal && (
@@ -650,8 +846,14 @@ export default function StudentActivityTracker() {
                         <div className="font-bold text-slate-900">{logItem.reason}</div>
                         <div className="text-[10px] text-slate-400">{logItem.dateStr}</div>
                       </div>
-                      <span className="font-extrabold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
-                        +{logItem.change}점
+                      <span
+                        className={`font-black text-xs px-2 py-0.5 rounded-md ${
+                          logItem.change >= 0
+                            ? "bg-emerald-100 text-emerald-800"
+                            : "bg-rose-100 text-rose-800"
+                        }`}
+                      >
+                        {logItem.change >= 0 ? `+${logItem.change}점` : `${logItem.change}점`}
                       </span>
                     </div>
                   ))

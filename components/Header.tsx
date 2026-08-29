@@ -27,75 +27,75 @@ export default function Header() {
             <ArrowLeft className="w-5 h-5" />
           </button>
           {/* 브랜드 로고 */}
-          <Link href="/" className="group flex items-center gap-2.5 ml-1">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-lg shadow-xs group-hover:scale-105 transition-transform duration-200">
+          <Link href="/" className="group flex items-center gap-2.5 ml-1 shrink-0">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-lg shadow-xs group-hover:scale-105 transition-transform duration-200 shrink-0">
               🎓
             </span>
-            <span className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+            <span className="text-sm sm:text-base font-black text-slate-900 tracking-tight whitespace-nowrap">
               수연쌤의 사회·역사 아카데미
             </span>
           </Link>
         </div>
 
         {/* 데스크탑 네비게이션 */}
-        <nav className="hidden md:flex items-center gap-5">
+        <nav className="hidden md:flex items-center gap-4 lg:gap-5 overflow-x-auto scrollbar-none py-1">
           <Link 
             href="/" 
-            className="text-xs sm:text-sm font-extrabold text-slate-700 hover:text-indigo-600 transition-colors duration-200"
+            className="text-xs sm:text-sm font-extrabold text-slate-700 hover:text-indigo-600 transition-colors duration-200 whitespace-nowrap shrink-0"
           >
             홈
           </Link>
 
-          <div className="h-4 w-px bg-slate-200" />
+          <div className="h-4 w-px bg-slate-200 shrink-0" />
 
           {/* 사회 폴더 */}
           <Link 
             href="/human-rights" 
-            className="text-xs sm:text-sm font-bold text-slate-700 hover:text-indigo-600 transition-colors duration-200 flex items-center gap-1"
+            className="text-xs sm:text-sm font-bold text-slate-700 hover:text-indigo-600 transition-colors duration-200 flex items-center gap-1 whitespace-nowrap shrink-0"
           >
             <span>⚖️ 인권구제 가이드</span>
           </Link>
           <Link 
             href="/social-quiz" 
-            className="text-xs sm:text-sm font-bold text-slate-700 hover:text-indigo-600 transition-colors duration-200 flex items-center gap-1"
+            className="text-xs sm:text-sm font-bold text-slate-700 hover:text-indigo-600 transition-colors duration-200 flex items-center gap-1 whitespace-nowrap shrink-0"
           >
             <span>🏛️ 사회 퀴즈</span>
           </Link>
 
-          <div className="h-4 w-px bg-slate-200" />
+          <div className="h-4 w-px bg-slate-200 shrink-0" />
 
           {/* 역사 폴더 */}
           <Link 
             href="/quiz" 
-            className="text-xs sm:text-sm font-bold text-slate-700 hover:text-purple-600 transition-colors duration-200 flex items-center gap-1"
+            className="text-xs sm:text-sm font-bold text-slate-700 hover:text-purple-600 transition-colors duration-200 flex items-center gap-1 whitespace-nowrap shrink-0"
           >
             <span>🎮 역사 퀴즈</span>
           </Link>
           <Link 
             href="/explore" 
-            className="text-xs sm:text-sm font-bold text-slate-700 hover:text-purple-600 transition-colors duration-200 flex items-center gap-1"
+            className="text-xs sm:text-sm font-bold text-slate-700 hover:text-purple-600 transition-colors duration-200 flex items-center gap-1 whitespace-nowrap shrink-0"
           >
             <span>📚 학습 백과</span>
           </Link>
           <Link 
             href="/review" 
-            className="text-xs sm:text-sm font-bold text-slate-700 hover:text-purple-600 transition-colors duration-200 flex items-center gap-1"
+            className="text-xs sm:text-sm font-bold text-slate-700 hover:text-purple-600 transition-colors duration-200 flex items-center gap-1 whitespace-nowrap shrink-0"
           >
             <span>📝 복습 노트</span>
           </Link>
 
-          <div className="h-4 w-px bg-slate-200" />
+          <div className="h-4 w-px bg-slate-200 shrink-0" />
 
           {/* 학습 도구 폴더 */}
           <Link 
             href="/activity-tracker" 
-            className="text-xs sm:text-sm font-bold text-slate-700 hover:text-emerald-600 transition-colors duration-200 flex items-center gap-1"
+            className="text-xs sm:text-sm font-bold text-slate-700 hover:text-emerald-600 transition-colors duration-200 flex items-center gap-1 whitespace-nowrap shrink-0"
           >
             <span>📊 활동 기록</span>
           </Link>
           <Link 
             href="/social-picker" 
-            className="text-xs sm:text-sm font-bold text-slate-700 hover:text-rose-600 transition-colors duration-200 flex items-center gap-1"
+            className="text-xs sm:text-sm font-bold text-slate-700 hover:text-rose-600 transition-colors duration-200 flex items-center gap-1 whitespace-nowrap shrink-0"
           >
             <span>🎯 발표자 추첨기</span>
           </Link>
