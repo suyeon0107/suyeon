@@ -3,6 +3,7 @@
 import { useState } from "react";
 import QuizGame from "@/components/QuizGame";
 import HumanRightsGuide from "@/components/HumanRightsGuide";
+import SocialPresentationPicker from "@/components/SocialPresentationPicker";
 import { 
   ExploreApp, 
   ReviewApp, 
@@ -18,17 +19,27 @@ import {
   Palette, 
   Home,
   ArrowLeft,
-  Scale
+  Scale,
+  Dice5
 } from "lucide-react";
 
 export default function HomePage() {
-  const [activeApp, setActiveApp] = useState<"quiz" | "human-rights" | "explore" | "review" | "theme" | "about" | null>(null);
+  const [activeApp, setActiveApp] = useState<"quiz" | "human-rights" | "social-picker" | "explore" | "review" | "theme" | "about" | null>(null);
   const [wallpaper, setWallpaper] = useState<WallpaperId>("lavender");
 
   const selectedWallpaper = WALLPAPER_OPTIONS.find((wp) => wp.id === wallpaper) || WALLPAPER_OPTIONS[0];
 
   // 메뉴 아이콘 데이터
   const menuItems = [
+    {
+      id: "social-picker" as const,
+      label: "발표자 추첨기",
+      emoji: "🎯",
+      icon: Dice5,
+      gradient: "from-[#f0b5c8] to-[#e8a87c]",
+      shadow: "shadow-pink-200/50",
+      description: "사회 수업 발표자 랜덤 추첨!",
+    },
     {
       id: "human-rights" as const,
       label: "인권구제 가이드",
@@ -97,6 +108,7 @@ export default function HomePage() {
             <ArrowLeft className="w-5 h-5 text-[var(--pastel-accent)]" />
           </button>
           <span className="text-base font-bold text-[var(--pastel-fg)]">
+            {activeApp === "social-picker" && "🎯 발표자 랜덤 추첨기"}
             {activeApp === "human-rights" && "⚖️ 인권구제 가이드 & 시뮬레이터"}
             {activeApp === "quiz" && "🎮 역사 퀴즈"}
             {activeApp === "explore" && "📚 학습 백과"}
@@ -108,7 +120,8 @@ export default function HomePage() {
 
         {/* 앱 콘텐츠 */}
         <div className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-5xl">
+          <div className="mx-auto max-w-6xl">
+            {activeApp === "social-picker" && <SocialPresentationPicker />}
             {activeApp === "human-rights" && <HumanRightsGuide />}
             {activeApp === "quiz" && <QuizGame />}
             {activeApp === "explore" && <ExploreApp onClose={() => setActiveApp(null)} />}
