@@ -14,7 +14,8 @@ import {
   FileText, 
   History,
   Edit3,
-  Check
+  Check,
+  Trash2
 } from "lucide-react";
 
 // --- ROSTER DATA STRUCTURE ---
@@ -138,6 +139,17 @@ export default function StudentActivityTracker() {
     }
   });
 
+  // Class Progress Note Map per class: `1-1` -> "2p 형성 1번"
+  const [progressNotesMap, setProgressNotesMap] = useState<Record<string, string>>(() => {
+    if (typeof window === "undefined") return { "1-1": "2p 형성 1번" };
+    try {
+      const savedProgress = localStorage.getItem("suyeon_class_progress_v1");
+      return savedProgress ? JSON.parse(savedProgress) : { "1-1": "2p 형성 1번" };
+    } catch {
+      return { "1-1": "2p 형성 1번" };
+    }
+  });
+
   // Search & Sorting
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortBy, setSortBy] = useState<"num" | "score" | "name">("num");
@@ -145,9 +157,6 @@ export default function StudentActivityTracker() {
   // Selection for batch actions
   const [selectedNums, setSelectedNums] = useState<Set<number>>(new Set());
 
-  // Quick preset bar & custom per-student input
-  const [quickReasonInput, setQuickReasonInput] = useState<string>("2p 형성 1번");
-  
   // Expanded student row number (for viewing timestamped history dropdown)
   const [expandedNum, setExpandedNum] = useState<number | null>(null);
 
@@ -157,6 +166,20 @@ export default function StudentActivityTracker() {
 
   // Detail Modal for single student history
   const [selectedStudentForModal, setSelectedStudentForModal] = useState<{ num: number; name: string } | null>(null);
+
+  // Get current class progress note
+  const currentProgressNote = progressNotesMap[selectedClassKey] || "2p 형성 1번";
+
+  // Update progress note for current class and save to LocalStorage
+  const handleProgressNoteChange = (newText: string) => {
+    const updated = { ...progressNotesMap, [selectedClassKey]: newText };
+    setProgressNotesMap(updated);
+    try {
+      localStorage.setItem("suyeon_class_progress_v1", JSON.stringify(updated));
+    } catch {
+      // Fallback
+    }
+  };
 
   // Save to LocalStorage
   const saveCurrentData = (
@@ -203,7 +226,7 @@ export default function StudentActivityTracker() {
     }
   };
 
-  // Add Point Function
+  // Add Point Function (Supports -1, +1, custom change)
   const addPointToStudents = (nums: number[], changeVal: number, reasonText: string) => {
     if (nums.length === 0) return;
 
@@ -217,13 +240,14 @@ export default function StudentActivityTracker() {
     const updatedScores = { ...scoresMap };
     const newLogsList: LogEntry[] = [...logs];
 
-    const defaultReason = reasonText.trim() || (changeVal >= 0 ? `+${changeVal}점` : `${changeVal}점`);
+    const defaultReason = reasonText.trim() || (changeVal >= 0 ? `+${changeVal}점` : `${changeVal}점 (감점)`);
 
     nums.forEach((num) => {
       const key = `${selectedClassKey}_${num}`;
       const prev = updatedScores[key] || { score: 0, recordCount: 0, latestReason: "-" };
       const sName = currentClassObj.names[num] || `${num}번`;
 
+      // Allow score to change dynamically (e.g. 2점 -> 1점 -> 0점)
       const newScore = Math.max(0, prev.score + changeVal);
       updatedScores[key] = {
         score: newScore,
@@ -243,6 +267,38 @@ export default function StudentActivityTracker() {
     });
 
     saveCurrentData(updatedScores, newLogsList);
+  };
+
+  // Delete Log Item Function (Reverts point & removes from history)
+  const deleteLogItem = (logId: string) => {
+    const targetLog = logs.find((l) => l.id === logId);
+    if (!targetLog) return;
+
+    if (!confirm(`[${targetLog.studentName}] 학생의 '${targetLog.reason}' (${targetLog.change >= 0 ? '+' : ''}${targetLog.change}점) 기록을 삭제하시겠습니까?`)) {
+      return;
+    }
+
+    const newLogs = logs.filter((l) => l.id !== logId);
+    const key = `${targetLog.classKey}_${targetLog.num}`;
+    const prevScoreData = scoresMap[key] || { score: 0, recordCount: 0, latestReason: "-" };
+
+    // Revert score by subtracting change value (e.g. subtracting +1 score drops score by 1; subtracting -1 score adds 1 back)
+    const newScore = Math.max(0, prevScoreData.score - targetLog.change);
+
+    const studentRemainingLogs = newLogs.filter(
+      (l) => l.classKey === targetLog.classKey && l.num === targetLog.num
+    );
+
+    const updatedScores = {
+      ...scoresMap,
+      [key]: {
+        score: newScore,
+        recordCount: Math.max(0, prevScoreData.recordCount - 1),
+        latestReason: studentRemainingLogs.length > 0 ? studentRemainingLogs[0].reason : "-"
+      }
+    };
+
+    saveCurrentData(updatedScores, newLogs);
   };
 
   // Selection toggle
@@ -360,7 +416,7 @@ export default function StudentActivityTracker() {
       {/* Main Activity Card Container */}
       <div className="bg-white/90 backdrop-blur-md p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-6">
         
-        {/* Navigation Tabs */}
+        {/* Navigation Tabs & Class Progress Bar */}
         <div className="flex items-center justify-between border-b border-slate-100 pb-4 flex-wrap gap-4">
           <div className="flex items-center gap-2 bg-slate-100/80 p-1.5 rounded-2xl border border-slate-200/60">
             <button
@@ -400,30 +456,33 @@ export default function StudentActivityTracker() {
             </button>
           </div>
 
-          {/* Quick preset & Search Filter Bar */}
+          {/* Yellow Class Progress Input (수업 진도 기록 칸 - 자동 저장) & Quick batch bar */}
           {activeTab === "summary" && (
             <div className="flex items-center gap-3 w-full lg:w-auto flex-wrap">
               
-              {/* Batch preset input */}
-              <div className="flex items-center gap-2 bg-amber-50/80 border border-amber-200/80 px-3.5 py-1.5 rounded-2xl text-xs font-semibold text-amber-900 flex-1 sm:flex-initial">
-                <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+              {/* Yellow Progress input box */}
+              <div className="flex items-center gap-2 bg-amber-50 border-2 border-amber-300 px-3.5 py-1.5 rounded-2xl text-xs font-semibold text-amber-950 shadow-xs flex-1 sm:flex-initial">
+                <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
                 <input
                   type="text"
-                  value={quickReasonInput}
-                  onChange={(e) => setQuickReasonInput(e.target.value)}
-                  placeholder="예: 2p 형성 1번"
-                  className="bg-transparent text-xs font-bold text-amber-900 focus:outline-none w-28 sm:w-36"
+                  value={currentProgressNote}
+                  onChange={(e) => handleProgressNoteChange(e.target.value)}
+                  placeholder="수업 진도 입력 (예: 2p 형성 1번)"
+                  title="선생님 수업 진도 기록 칸 (자동 저장)"
+                  className="bg-transparent text-xs font-black text-amber-950 focus:outline-none w-32 sm:w-44 placeholder-amber-400"
                 />
+                
+                {/* Batch Button */}
                 <button
                   disabled={selectedNums.size === 0}
                   onClick={() => {
-                    addPointToStudents(Array.from(selectedNums), 1, quickReasonInput);
+                    addPointToStudents(Array.from(selectedNums), 1, currentProgressNote);
                     setSelectedNums(new Set());
                   }}
-                  className={`px-2.5 py-1 rounded-xl text-[11px] font-extrabold transition-all cursor-pointer ${
+                  className={`px-3 py-1 rounded-xl text-[11px] font-black transition-all cursor-pointer ${
                     selectedNums.size > 0
-                      ? "bg-amber-500 text-white shadow-xs hover:bg-amber-600"
-                      : "bg-amber-200/60 text-amber-500 cursor-not-allowed"
+                      ? "bg-amber-500 text-white shadow-xs hover:bg-amber-600 scale-105"
+                      : "bg-amber-200/80 text-amber-600 cursor-not-allowed"
                   }`}
                 >
                   선택 {selectedNums.size}명 일괄 부여 (+1p)
@@ -482,7 +541,7 @@ export default function StudentActivityTracker() {
                 </button>
                 <span>학생 요약 ({filteredStudentList.length}명)</span>
               </div>
-              <span className="text-[11px]">학생 이름/화살표( &gt; )를 누르면 시간별 누적 기록이 펼쳐집니다.</span>
+              <span className="text-[11px]">학생 이름/화살표( &gt; )를 누르면 삭제 가능한 시간별 누적 기록이 펼쳐집니다.</span>
             </div>
 
             {/* Student Table List */}
@@ -503,7 +562,9 @@ export default function StudentActivityTracker() {
               {filteredStudentList.map((st) => {
                 const isChecked = selectedNums.has(st.num);
                 const isExpanded = expandedNum === st.num;
-                const scorePercent = Math.min(100, Math.max(5, (st.score / maxClassScore) * 100));
+                
+                // Dynamic gauge score percentage (shrinks on -1, grows on +1)
+                const scorePercent = Math.min(100, Math.max(0, (st.score / maxClassScore) * 100));
 
                 // Logs for this specific student
                 const studentLogs = logs.filter(
@@ -551,15 +612,19 @@ export default function StudentActivityTracker() {
                         </button>
                       </div>
 
-                      {/* Score Progress Bar (점수 게이지) */}
+                      {/* Score Progress Bar (점수 게이지 바 - -1 및 +1 완벽 연동) */}
                       <div className="col-span-3 flex items-center gap-2.5">
-                        <div className="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-200/60 relative">
+                        <div className="flex-1 h-3.5 bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-200/60 relative">
                           <div
-                            className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-teal-400 to-indigo-500 transition-all duration-500"
+                            className={`h-full rounded-full transition-all duration-300 ${
+                              st.score > 0
+                                ? "bg-gradient-to-r from-emerald-400 via-teal-400 to-indigo-500"
+                                : "bg-slate-300"
+                            }`}
                             style={{ width: `${scorePercent}%` }}
                           />
                         </div>
-                        <span className="font-extrabold text-xs text-indigo-700 min-w-[28px] text-right">
+                        <span className={`font-black text-xs min-w-[28px] text-right ${st.score > 0 ? 'text-indigo-700' : 'text-slate-400'}`}>
                           {st.score}점
                         </span>
                       </div>
@@ -567,16 +632,23 @@ export default function StudentActivityTracker() {
                       {/* Quick +1 / -1 buttons with custom note launcher */}
                       <div className="col-span-2 flex items-center justify-center gap-1.5">
                         <button
-                          onClick={() => addPointToStudents([st.num], 1, quickReasonInput || "활동 참여")}
-                          className="px-2.5 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 rounded-full font-black text-xs transition-transform active:scale-95 cursor-pointer shadow-2xs"
-                          title="점수 +1 (기본 사유)"
+                          onClick={() => {
+                            // Auto launcher: Prompt modal for reason or quick confirm
+                            setCustomReasonModal({ num: st.num, name: st.name, change: 1 });
+                            setModalReasonText(currentProgressNote);
+                          }}
+                          className="px-2.5 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 rounded-full font-black text-xs transition-transform active:scale-95 cursor-pointer shadow-2xs flex items-center gap-0.5"
+                          title="점수 +1 (사유 선택/패스 모달 노출)"
                         >
                           +1
                         </button>
                         
                         <button
-                          onClick={() => addPointToStudents([st.num], -1, "감점 (-1)")}
-                          className="px-2.5 py-1 bg-rose-100 hover:bg-rose-200 text-rose-800 rounded-full font-black text-xs transition-transform active:scale-95 cursor-pointer shadow-2xs"
+                          onClick={() => {
+                            setCustomReasonModal({ num: st.num, name: st.name, change: -1 });
+                            setModalReasonText("감점 (-1)");
+                          }}
+                          className="px-2.5 py-1 bg-rose-100 hover:bg-rose-200 text-rose-800 rounded-full font-black text-xs transition-transform active:scale-95 cursor-pointer shadow-2xs flex items-center gap-0.5"
                           title="점수 -1 (감점)"
                         >
                           -1
@@ -585,7 +657,7 @@ export default function StudentActivityTracker() {
                         <button
                           onClick={() => {
                             setCustomReasonModal({ num: st.num, name: st.name, change: 1 });
-                            setModalReasonText(quickReasonInput || "");
+                            setModalReasonText(currentProgressNote);
                           }}
                           className="p-1 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors cursor-pointer"
                           title="사유 직접 쓰기 / 패스"
@@ -618,7 +690,7 @@ export default function StudentActivityTracker() {
 
                     </div>
 
-                    {/* EXPANDED DROPDOWN TIMELINE (학생 화살표 누르면 펼쳐지는 시간별 기록) */}
+                    {/* EXPANDED DROPDOWN TIMELINE WITH DELETE BUTTON (삭제 가능한 일시별 누적 기록) */}
                     {isExpanded && (
                       <div className="col-span-12 bg-purple-50/40 p-4 border-t border-b border-purple-100 space-y-2 animate-fadeIn">
                         <div className="flex items-center justify-between text-xs font-bold text-purple-900 pb-1 border-b border-purple-200/60">
@@ -645,15 +717,27 @@ export default function StudentActivityTracker() {
                                     {lg.reason}
                                   </span>
                                 </div>
-                                <span
-                                  className={`font-black text-xs px-2 py-0.5 rounded-md ${
-                                    lg.change >= 0
-                                      ? "bg-emerald-100 text-emerald-800"
-                                      : "bg-rose-100 text-rose-800"
-                                  }`}
-                                >
-                                  {lg.change >= 0 ? `+${lg.change}점` : `${lg.change}점`}
-                                </span>
+
+                                <div className="flex items-center gap-2">
+                                  <span
+                                    className={`font-black text-xs px-2 py-0.5 rounded-md ${
+                                      lg.change >= 0
+                                        ? "bg-emerald-100 text-emerald-800"
+                                        : "bg-rose-100 text-rose-800"
+                                    }`}
+                                  >
+                                    {lg.change >= 0 ? `+${lg.change}점` : `${lg.change}점`}
+                                  </span>
+
+                                  {/* Delete Log Item Button */}
+                                  <button
+                                    onClick={() => deleteLogItem(lg.id)}
+                                    className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                                    title="이 기록 삭제하기 (점수 환원)"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
                               </div>
                             ))}
                           </div>
@@ -706,15 +790,25 @@ export default function StudentActivityTracker() {
                         </div>
                       </div>
 
-                      <span
-                        className={`font-black text-xs px-2.5 py-1 rounded-full ${
-                          logItem.change >= 0
-                            ? "bg-emerald-100 text-emerald-800"
-                            : "bg-rose-100 text-rose-800"
-                        }`}
-                      >
-                        {logItem.change >= 0 ? `+${logItem.change}점` : `${logItem.change}점`}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`font-black text-xs px-2.5 py-1 rounded-full ${
+                            logItem.change >= 0
+                              ? "bg-emerald-100 text-emerald-800"
+                              : "bg-rose-100 text-rose-800"
+                          }`}
+                        >
+                          {logItem.change >= 0 ? `+${logItem.change}점` : `${logItem.change}점`}
+                        </span>
+
+                        <button
+                          onClick={() => deleteLogItem(logItem.id)}
+                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                          title="기록 삭제"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   ))
               )}
@@ -756,14 +850,19 @@ export default function StudentActivityTracker() {
 
       </div>
 
-      {/* Custom Reason Modal (학생 개별 사유 작성 or 패스) */}
+      {/* Custom Reason Modal (자동으로 뜨는 긴 사유 입력창 / 패스 선택) */}
       {customReasonModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 animate-fadeIn space-y-4">
-            <h3 className="text-base font-extrabold text-slate-900">
-              [{customReasonModal.num}번 {customReasonModal.name}] 점수 기록 내용 작성
-            </h3>
-            
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 animate-fadeIn space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-extrabold text-slate-900">
+                [{customReasonModal.num}번 {customReasonModal.name}] 점수 ({customReasonModal.change >= 0 ? '+' : ''}{customReasonModal.change}점) 기록 사유
+              </h3>
+              <span className={`text-xs font-black px-2.5 py-1 rounded-full ${customReasonModal.change >= 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
+                {customReasonModal.change >= 0 ? `+${customReasonModal.change}점` : `${customReasonModal.change}점`}
+              </span>
+            </div>
+
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-500">
                 활동 사유 또는 메모를 입력하세요 (선택 사항)
@@ -772,29 +871,35 @@ export default function StudentActivityTracker() {
                 type="text"
                 value={modalReasonText}
                 onChange={(e) => setModalReasonText(e.target.value)}
-                placeholder="내용 입력 없이 패스 가능"
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    addPointToStudents([customReasonModal.num], customReasonModal.change, modalReasonText || currentProgressNote);
+                    setCustomReasonModal(null);
+                  }
+                }}
+                placeholder="입력 없이 패스 가능"
+                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
 
             <div className="flex items-center justify-end gap-2 pt-2">
               <button
                 onClick={() => {
-                  // PASS button: Grant point with blank/default reason
-                  addPointToStudents([customReasonModal.num], customReasonModal.change, "활동 기록 (패스)");
+                  // PASS button: Grant point with blank/default progress note
+                  addPointToStudents([customReasonModal.num], customReasonModal.change, currentProgressNote || "활동 기록");
                   setCustomReasonModal(null);
                 }}
                 className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl cursor-pointer"
               >
-                패스 (건너뛰기)
+                패스 (사유없이 점수만)
               </button>
               
               <button
                 onClick={() => {
-                  addPointToStudents([customReasonModal.num], customReasonModal.change, modalReasonText || "활동 기록");
+                  addPointToStudents([customReasonModal.num], customReasonModal.change, modalReasonText || currentProgressNote);
                   setCustomReasonModal(null);
                 }}
-                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-xl flex items-center gap-1 cursor-pointer"
+                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-xl flex items-center gap-1 cursor-pointer shadow-xs"
               >
                 <Check className="w-3.5 h-3.5" />
                 <span>기록 저장</span>
@@ -824,7 +929,7 @@ export default function StudentActivityTracker() {
               </div>
             </div>
 
-            {/* History logs for this student */}
+            {/* History logs for this student with delete feature */}
             <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
               {logs.filter(
                 (l) => l.classKey === selectedClassKey && l.num === selectedStudentForModal.num
@@ -846,15 +951,24 @@ export default function StudentActivityTracker() {
                         <div className="font-bold text-slate-900">{logItem.reason}</div>
                         <div className="text-[10px] text-slate-400">{logItem.dateStr}</div>
                       </div>
-                      <span
-                        className={`font-black text-xs px-2 py-0.5 rounded-md ${
-                          logItem.change >= 0
-                            ? "bg-emerald-100 text-emerald-800"
-                            : "bg-rose-100 text-rose-800"
-                        }`}
-                      >
-                        {logItem.change >= 0 ? `+${logItem.change}점` : `${logItem.change}점`}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`font-black text-xs px-2 py-0.5 rounded-md ${
+                            logItem.change >= 0
+                              ? "bg-emerald-100 text-emerald-800"
+                              : "bg-rose-100 text-rose-800"
+                          }`}
+                        >
+                          {logItem.change >= 0 ? `+${logItem.change}점` : `${logItem.change}점`}
+                        </span>
+                        <button
+                          onClick={() => deleteLogItem(logItem.id)}
+                          className="p-1 text-slate-400 hover:text-rose-600 rounded-lg cursor-pointer"
+                          title="기록 삭제"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
                   ))
               )}
