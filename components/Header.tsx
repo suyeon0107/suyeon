@@ -58,16 +58,22 @@ export default function Header() {
             <span>⚖️ 인권구제 가이드</span>
           </Link>
           <Link 
-            href="/" 
-            className="text-sm font-medium text-[var(--pastel-fg)]/60 hover:text-[var(--pastel-accent)] transition-colors duration-200"
+            href="/quiz" 
+            className="text-sm font-medium text-[var(--pastel-fg)]/80 hover:text-[var(--pastel-accent)] transition-colors duration-200 flex items-center gap-1"
           >
-            역사 퀴즈
+            <span>🎮 역사 퀴즈</span>
           </Link>
           <Link 
-            href="/" 
-            className="text-sm font-medium text-[var(--pastel-fg)]/60 hover:text-[var(--pastel-accent)] transition-colors duration-200"
+            href="/explore" 
+            className="text-sm font-medium text-[var(--pastel-fg)]/80 hover:text-[var(--pastel-accent)] transition-colors duration-200 flex items-center gap-1"
           >
-            학습 백과
+            <span>📚 학습 백과</span>
+          </Link>
+          <Link 
+            href="/review" 
+            className="text-sm font-medium text-[var(--pastel-fg)]/80 hover:text-[var(--pastel-accent)] transition-colors duration-200 flex items-center gap-1"
+          >
+            <span>📝 복습 노트</span>
           </Link>
         </nav>
 
@@ -116,18 +122,25 @@ export default function Header() {
               ⚖️ 인권구제 가이드
             </Link>
             <Link
-              href="/"
-              className="block rounded-xl px-3 py-2.5 text-base font-medium text-[var(--pastel-fg)]/70 hover:bg-[var(--pastel-accent-soft)]"
+              href="/quiz"
+              className="block rounded-xl px-3 py-2.5 text-base font-medium text-[var(--pastel-fg)]/80 hover:bg-[var(--pastel-accent-soft)]"
               onClick={() => setIsMenuOpen(false)}
             >
               🎮 역사 퀴즈
             </Link>
             <Link
-              href="/"
-              className="block rounded-xl px-3 py-2.5 text-base font-medium text-[var(--pastel-fg)]/70 hover:bg-[var(--pastel-accent-soft)]"
+              href="/explore"
+              className="block rounded-xl px-3 py-2.5 text-base font-medium text-[var(--pastel-fg)]/80 hover:bg-[var(--pastel-accent-soft)]"
               onClick={() => setIsMenuOpen(false)}
             >
               📚 학습 백과
+            </Link>
+            <Link
+              href="/review"
+              className="block rounded-xl px-3 py-2.5 text-base font-medium text-[var(--pastel-fg)]/80 hover:bg-[var(--pastel-accent-soft)]"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              📝 복습 노트
             </Link>
           </div>
         </div>

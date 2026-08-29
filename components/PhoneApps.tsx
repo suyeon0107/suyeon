@@ -50,9 +50,8 @@ export const WALLPAPER_OPTIONS: WallpaperOption[] = [
   },
 ];
 
-// --- 1. 학습 대백과 (Explore App) ---
 interface ExploreAppProps {
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 export function ExploreApp({ onClose }: ExploreAppProps) {
