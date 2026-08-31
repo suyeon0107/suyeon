@@ -3,6 +3,7 @@
 import { useState } from "react";
 import QuizGame from "@/components/QuizGame";
 import HumanRightsGuide from "@/components/HumanRightsGuide";
+import LaborRightsChatbot from "@/components/LaborRightsChatbot";
 import SocialPresentationPicker from "@/components/SocialPresentationPicker";
 import SocialQuizGame from "@/components/SocialQuizGame";
 import StudentActivityTracker from "@/components/StudentActivityTracker";
@@ -22,11 +23,12 @@ import {
   GraduationCap,
   Sparkles,
   FolderOpen,
-  BarChart3
+  BarChart3,
+  Bot
 } from "lucide-react";
 
 export default function HomePage() {
-  const [activeApp, setActiveApp] = useState<"quiz" | "social-quiz" | "human-rights" | "social-picker" | "activity-tracker" | "explore" | "review" | "about" | null>(null);
+  const [activeApp, setActiveApp] = useState<"quiz" | "social-quiz" | "human-rights" | "labor-rights" | "social-picker" | "activity-tracker" | "explore" | "review" | "about" | null>(null);
 
   // 카테고리 폴더별 메뉴 데이터 (Neo-Brutalism Color Mapping)
   const menuCategories = [
@@ -42,6 +44,14 @@ export default function HomePage() {
           icon: Scale,
           solidBg: "bg-[#5ce1e6]", // Cyan
           description: "인권 침해 상황별 구제 기관 시뮬레이터",
+        },
+        {
+          id: "labor-rights" as const,
+          label: "노동인권 챗봇",
+          emoji: "🤖",
+          icon: Bot,
+          solidBg: "bg-[#ff914d]", // Orange
+          description: "청소년 노동인권 알바지킴이 챗봇 & 급여 계산기",
         },
         {
           id: "social-quiz" as const,
@@ -134,6 +144,7 @@ export default function HomePage() {
             {activeApp === "social-quiz" && "🏛️ 중3 사회 단원별 개념 퀴즈"}
             {activeApp === "social-picker" && "🎯 발표자 랜덤 추첨기"}
             {activeApp === "human-rights" && "⚖️ 인권구제 가이드 & 시뮬레이터"}
+            {activeApp === "labor-rights" && "🤖 청소년 노동인권 지킴이 챗봇"}
             {activeApp === "quiz" && "🎮 역사 퀴즈"}
             {activeApp === "explore" && "📚 학습 백과"}
             {activeApp === "review" && "📝 복습 노트"}
@@ -148,6 +159,7 @@ export default function HomePage() {
             {activeApp === "social-quiz" && <SocialQuizGame />}
             {activeApp === "social-picker" && <SocialPresentationPicker />}
             {activeApp === "human-rights" && <HumanRightsGuide />}
+            {activeApp === "labor-rights" && <LaborRightsChatbot />}
             {activeApp === "quiz" && <QuizGame />}
             {activeApp === "explore" && <ExploreApp onClose={() => setActiveApp(null)} />}
             {activeApp === "review" && <ReviewApp onClose={() => setActiveApp(null)} />}
