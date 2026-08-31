@@ -25,7 +25,11 @@ import {
   Home,
   ScrollText,
   BookOpen,
-  Scale
+  Scale,
+  HelpCircle,
+  CheckCircle2,
+  XCircle,
+  Award
 } from "lucide-react";
 
 interface ActionItem {
@@ -47,6 +51,57 @@ interface Props {
   onClose?: () => void;
 }
 
+const QUIZ_QUESTIONS = [
+  {
+    id: 1,
+    question: "만 15세 미만 청소년은 어떤 경우에도 아르바이트를 할 수 없다?",
+    answer: "X" as const,
+    explanation: "❌ 틀렸습니다! 원칙적으로 만 15세 이상부터 가능하지만, 만 13~14세 청소년도 고용노동부장관이 발급하는 '취직인허가증'을 받으면 예외적으로 일할 수 있습니다."
+  },
+  {
+    id: 2,
+    question: "알바를 시작하기 전에 근로계약서를 작성하고, 사장님에게 1부를 직접 교부받아야 한다?",
+    answer: "O" as const,
+    explanation: "⭕ 정답입니다! 근로계약서는 일하기 전 작성하여 사장님과 근로자가 각각 1부씩 보관해야 하며, 위반 시 사업주에게 500만 원 이하의 벌금이 부과됩니다."
+  },
+  {
+    id: 3,
+    question: "편의점 수습 기간(3개월) 동안에는 최저시급의 90%만 받아도 법적으로 문제가 없다?",
+    answer: "X" as const,
+    explanation: "❌ 틀렸습니다! 편의점, 패스트푸드, 배달 등 단순노무직종은 수습기간이라 하더라도 최저임금 100%(2026년 10,320원)를 전액 지급해야 합니다."
+  },
+  {
+    id: 4,
+    question: "청소년(18세 미만)의 근로시간은 하루 7시간, 1주일 35시간 이내로 제한된다?",
+    answer: "O" as const,
+    explanation: "⭕ 정답입니다! 청소년 법정 근로시간은 하루 7시간, 주 35시간 이내이며, 당사자 합의가 있더라도 하루 1시간, 주 5시간을 초과하여 연장근로를 할 수 없습니다."
+  },
+  {
+    id: 5,
+    question: "밤 10시부터 아침 6시 사이의 야간근로는 사장님과 합의만 하면 청소년도 마음대로 할 수 있다?",
+    answer: "X" as const,
+    explanation: "❌ 틀렸습니다! 청소년 야간근로는 원칙적으로 금지되며, 본인 동의와 함께 '고용노동부 장관의 인가'를 얻은 특별한 경우에만 제한적으로 가능합니다."
+  },
+  {
+    id: 6,
+    question: "1주일에 15시간 이상 일하고 약속한 날에 개근했다면 주휴수당(하루 유급휴일)을 받는다?",
+    answer: "O" as const,
+    explanation: "⭕ 정답입니다! 1주 소정근로시간이 15시간 이상이고 개근했다면 하루치의 유급휴일 수당(주휴수당)을 추가로 받아야 합니다."
+  },
+  {
+    id: 7,
+    question: "일하다가 실수로 물건을 깨뜨리면 사장님이 월급에서 마음대로 돈을 깎거나 벌금을 물릴 수 있다?",
+    answer: "X" as const,
+    explanation: "❌ 틀렸습니다! 근로기준법상 사용자가 임의로 월급에서 손해배상금을 공제하거나 벌금을 내게 하는 것은 불법입니다."
+  },
+  {
+    id: 8,
+    question: "일하다 다쳤을 때 사장님이 산재보험에 가입해 주지 않았어도 100% 산재 처리를 받을 수 있다?",
+    answer: "O" as const,
+    explanation: "⭕ 정답입니다! 알바생도 100% 산재보험 적용 대상이며, 사업주의 가입 여부나 본인의 과실 유무와 관계없이 근로복지공단을 통해 치료비와 휴업급여를 보상받습니다."
+  }
+];
+
 export default function LaborRightsChatbot({ onClose }: Props) {
   const router = useRouter();
   const [messages, setMessages] = useState<MessageItem[]>([]);
@@ -56,6 +111,13 @@ export default function LaborRightsChatbot({ onClose }: Props) {
   // Modal states
   const [isCalcOpen, setIsCalcOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [isQuizOpen, setIsQuizOpen] = useState(false);
+  const [quizIdx, setQuizIdx] = useState(0);
+  const [quizScore, setQuizScore] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<"O" | "X" | null>(null);
+  const [showExplanation, setShowExplanation] = useState(false);
+  const [quizCompleted, setQuizCompleted] = useState(false);
+
   const [modalImage, setModalImage] = useState<{ title: string; src: string; downloadName: string } | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -110,17 +172,25 @@ export default function LaborRightsChatbot({ onClose }: Props) {
         <div className="space-y-3">
           <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
             한국공인노무사회 & 청소년근로권익센터가 전하는 <strong>일하는 청소년을 위한 노동인권 핵심 가이드</strong>입니다.<br />
-            아래에서 궁금하신 주제를 선택해 톡으로 바로 확인해보세요!
+            궁금하신 주제나 <strong>FAQ 자가진단 OX 퀴즈</strong>를 풀어보세요!
           </p>
 
-          {/* 대표 알바 십계명 / 근로조건 8 / 성인 비교 한눈에 보기 카드 */}
+          {/* 대표 퀴즈 / 비교표 / 십계명 카드 */}
           <div className="grid grid-cols-2 gap-2 text-xs font-bold pt-1">
+            <button 
+              onClick={() => startQuiz()}
+              className="col-span-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white p-2.5 rounded-xl text-center flex items-center justify-center gap-2 transition shadow-xs cursor-pointer border border-purple-700"
+            >
+              <HelpCircle className="w-4 h-4 text-amber-300 shrink-0" />
+              <span>❓ 자주 묻는 FAQ 노동인권 OX 퀴즈 풀기</span>
+            </button>
+
             <button 
               onClick={() => handleUserSelect("compare_adult", "⚖️ 청소년 vs 성인 근로조건 비교표")}
               className="col-span-2 bg-[#ffde59] hover:bg-amber-400 text-slate-950 border border-amber-500 p-2.5 rounded-xl text-center flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"
             >
               <Scale className="w-4 h-4 text-slate-950 shrink-0" />
-              <span>⚖️ 청소년 vs 성인 근로조건 비교표 한눈에 보기</span>
+              <span>⚖️ 청소년 vs 성인 근로조건 비교표</span>
             </button>
 
             <button 
@@ -219,6 +289,35 @@ export default function LaborRightsChatbot({ onClose }: Props) {
       )
     };
     setMessages([initialMsg]);
+  };
+
+  const startQuiz = () => {
+    setQuizIdx(0);
+    setQuizScore(0);
+    setSelectedAnswer(null);
+    setShowExplanation(false);
+    setQuizCompleted(false);
+    setIsQuizOpen(true);
+  };
+
+  const handleQuizAnswer = (ans: "O" | "X") => {
+    if (showExplanation) return;
+    setSelectedAnswer(ans);
+    setShowExplanation(true);
+    const currentQ = QUIZ_QUESTIONS[quizIdx];
+    if (ans === currentQ.answer) {
+      setQuizScore(prev => prev + 1);
+    }
+  };
+
+  const handleNextQuiz = () => {
+    if (quizIdx + 1 < QUIZ_QUESTIONS.length) {
+      setQuizIdx(prev => prev + 1);
+      setSelectedAnswer(null);
+      setShowExplanation(false);
+    } else {
+      setQuizCompleted(true);
+    }
   };
 
   const restartChat = () => {
@@ -338,9 +437,9 @@ export default function LaborRightsChatbot({ onClose }: Props) {
         return {
           title: "⚖️ 청소년 vs 성인 근로기준 한눈에 비교하기",
           actions: [
+            { label: "❓ 자주 묻는 FAQ OX 퀴즈", key: "start_quiz" },
             { label: "⏰ 근로시간·휴게시간 규정", key: "06_hours" },
-            { label: "🌙 야간·연장 가산수당 기준", key: "07_allowance" },
-            { label: "🧮 급여 모의 계산기", key: "open_calc" }
+            { label: "🌙 야간·연장 가산수당 기준", key: "07_allowance" }
           ],
           content: (
             <div className="space-y-3 text-xs sm:text-sm text-slate-700">
@@ -364,9 +463,9 @@ export default function LaborRightsChatbot({ onClose }: Props) {
         return {
           title: "📜 청소년 알바 십계명 (10가지 필수 규칙)",
           actions: [
+            { label: "❓ FAQ 자가진단 OX 퀴즈", key: "start_quiz" },
             { label: "⚖️ 청소년 vs 성인 비교표", key: "compare_adult" },
-            { label: "🔍 십계명 포스터 크게보기", key: "open_ten_img" },
-            { label: "📘 근로조건 8가지 인포그래픽", key: "conditions_8" }
+            { label: "🔍 십계명 포스터 크게보기", key: "open_ten_img" }
           ],
           content: (
             <div className="space-y-3 text-xs sm:text-sm text-slate-700">
@@ -415,9 +514,9 @@ export default function LaborRightsChatbot({ onClose }: Props) {
         return {
           title: "📘 중3이 꼭 알아야 할 최소한의 근로조건 8가지",
           actions: [
+            { label: "❓ 자주 묻는 OX 퀴즈 풀기", key: "start_quiz" },
             { label: "⚖️ 청소년 vs 성인 비교표", key: "compare_adult" },
-            { label: "🔍 인포그래픽 크게보기", key: "open_8_img" },
-            { label: "🧮 알바비 급여 계산기", key: "open_calc" }
+            { label: "🔍 인포그래픽 크게보기", key: "open_8_img" }
           ],
           content: (
             <div className="space-y-3 text-xs sm:text-sm text-slate-700">
@@ -763,6 +862,10 @@ export default function LaborRightsChatbot({ onClose }: Props) {
   };
 
   const handleUserSelect = (key: string, customLabel?: string) => {
+    if (key === "start_quiz") {
+      startQuiz();
+      return;
+    }
     if (key === "open_calc") {
       setIsCalcOpen(true);
       return;
@@ -803,6 +906,7 @@ export default function LaborRightsChatbot({ onClose }: Props) {
     let queryKey = key;
     if (key.startsWith("quick_")) {
       const mapping: Record<string, string> = {
+        quick_quiz: "start_quiz",
         quick_compare: "compare_adult",
         quick_commandments: "ten_commandments",
         quick_conditions8: "conditions_8",
@@ -813,6 +917,11 @@ export default function LaborRightsChatbot({ onClose }: Props) {
         quick_rights: "10_counseling"
       };
       queryKey = mapping[key] || key;
+    }
+
+    if (queryKey === "start_quiz") {
+      startQuiz();
+      return;
     }
 
     const selected = getKnowledgeContent(queryKey);
@@ -833,7 +942,10 @@ export default function LaborRightsChatbot({ onClose }: Props) {
     const lower = text.toLowerCase();
     let matchedKey: string | null = null;
 
-    if (lower.includes("비교") || lower.includes("성인") || lower.includes("차이")) {
+    if (lower.includes("퀴즈") || lower.includes("ox") || lower.includes("질문") || lower.includes("faq")) {
+      startQuiz();
+      return;
+    } else if (lower.includes("비교") || lower.includes("성인") || lower.includes("차이")) {
       matchedKey = "compare_adult";
     } else if (lower.includes("십계명") || lower.includes("10개") || lower.includes("규칙")) {
       matchedKey = "ten_commandments";
@@ -882,6 +994,9 @@ export default function LaborRightsChatbot({ onClose }: Props) {
             &quot;<strong>{text}</strong>&quot; 관련 주요 항목을 아래 메뉴에서 선택해보세요!
           </p>
           <div className="grid grid-cols-2 gap-1.5 text-xs">
+            <button onClick={() => startQuiz()} className="col-span-2 bg-[#c892ff] hover:bg-purple-300 text-left p-2 rounded-lg font-bold text-purple-950 cursor-pointer flex items-center justify-center gap-1">
+              <HelpCircle className="w-4 h-4" /> ❓ FAQ 노동인권 자가진단 OX 퀴즈 풀기
+            </button>
             <button onClick={() => handleUserSelect("compare_adult")} className="col-span-2 bg-[#ffde59] hover:bg-amber-400 text-left p-2 rounded-lg font-bold text-slate-950 cursor-pointer">⚖️ 청소년 vs 성인 근로조건 비교표</button>
             <button onClick={() => handleUserSelect("01_age")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">연령 및 취업조건</button>
             <button onClick={() => handleUserSelect("02_docs")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">부모님 동의서·서류</button>
@@ -889,7 +1004,6 @@ export default function LaborRightsChatbot({ onClose }: Props) {
             <button onClick={() => handleUserSelect("04_wage")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">최저임금 원칙</button>
             <button onClick={() => handleUserSelect("06_hours")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">근로·휴게시간</button>
             <button onClick={() => handleUserSelect("08_holiday")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">주휴수당 조건</button>
-            <button onClick={() => handleUserSelect("10_counseling")} className="bg-amber-50 hover:bg-amber-100 text-left p-2 rounded-lg font-bold text-amber-900 cursor-pointer">1:1 노무사 무료상담</button>
           </div>
         </div>
       )
@@ -987,6 +1101,13 @@ export default function LaborRightsChatbot({ onClose }: Props) {
 
           {/* Header Action Buttons */}
           <div className="flex items-center gap-1">
+            <button 
+              onClick={() => startQuiz()} 
+              className="p-1.5 text-purple-600 hover:bg-purple-50 rounded-full transition text-sm font-bold cursor-pointer" 
+              title="FAQ 자가진단 OX 퀴즈"
+            >
+              <HelpCircle className="w-4 h-4" />
+            </button>
             <button 
               onClick={() => setIsCalcOpen(true)} 
               className="p-1.5 text-slate-600 hover:text-blue-600 hover:bg-slate-100 rounded-full transition text-sm cursor-pointer" 
@@ -1088,6 +1209,12 @@ export default function LaborRightsChatbot({ onClose }: Props) {
         <div className="bg-white/95 backdrop-blur-md border-t border-slate-200/80 p-2 shrink-0 z-10">
           <div className="flex gap-2 overflow-x-auto pb-1.5 pt-0.5 px-1 text-xs font-semibold no-scrollbar">
             <button 
+              onClick={() => startQuiz()} 
+              className="whitespace-nowrap px-3 py-1.5 rounded-full bg-purple-600 hover:bg-purple-700 text-white font-bold transition shrink-0 flex items-center gap-1 cursor-pointer shadow-xs"
+            >
+              ❓ FAQ OX 퀴즈
+            </button>
+            <button 
               onClick={() => handleUserSelect("quick_compare")} 
               className="whitespace-nowrap px-3 py-1.5 rounded-full bg-[#ffde59] hover:bg-amber-400 text-slate-950 font-bold border border-amber-500 transition shrink-0 flex items-center gap-1 cursor-pointer shadow-xs"
             >
@@ -1144,7 +1271,7 @@ export default function LaborRightsChatbot({ onClose }: Props) {
                 type="text" 
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder="질문해보세요 (예: 비교, 최저임금, 근로시간, 야간)" 
+                placeholder="질문해보세요 (예: 퀴즈, 비교, 최저임금, 연장근로)" 
                 className="w-full bg-slate-100 border border-slate-300 focus:border-blue-500 focus:bg-white focus:outline-none text-xs sm:text-sm rounded-full py-2.5 pl-4 pr-9 transition text-slate-800 placeholder-slate-400 font-medium"
                 onKeyDown={(e) => e.key === "Enter" && handleSendTextMessage()}
               />
@@ -1159,6 +1286,134 @@ export default function LaborRightsChatbot({ onClose }: Props) {
         </div>
 
       </div>
+
+      {/* FAQ OX Quiz Modal */}
+      {isQuizOpen && (
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-5 animate-fadeIn">
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-slate-100">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-3.5 flex justify-between items-center">
+              <div className="flex items-center gap-2 font-bold text-sm sm:text-base">
+                <HelpCircle className="w-5 h-5 text-amber-300" />
+                <span>💡 자주 묻는 FAQ 노동인권 OX 퀴즈</span>
+              </div>
+              <button 
+                onClick={() => setIsQuizOpen(false)} 
+                className="text-white/80 hover:text-white p-1 rounded-lg transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Quiz Body */}
+            <div className="p-4 sm:p-5 space-y-4">
+              {!quizCompleted ? (
+                <>
+                  {/* Progress & Counter */}
+                  <div className="flex justify-between items-center text-xs font-bold text-slate-600">
+                    <span>문제 {quizIdx + 1} / {QUIZ_QUESTIONS.length}</span>
+                    <span className="text-purple-600">현재 점수: {quizScore}점</span>
+                  </div>
+                  <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                    <div 
+                      className="bg-purple-600 h-full transition-all duration-300"
+                      style={{ width: `${((quizIdx + 1) / QUIZ_QUESTIONS.length) * 100}%` }}
+                    />
+                  </div>
+
+                  {/* Question Box */}
+                  <div className="bg-purple-50/70 border border-purple-200 rounded-2xl p-4 sm:p-5 text-slate-900 font-bold text-sm sm:text-base leading-relaxed text-center shadow-xs">
+                    &quot;{QUIZ_QUESTIONS[quizIdx].question}&quot;
+                  </div>
+
+                  {/* OX Option Buttons */}
+                  <div className="grid grid-cols-2 gap-3 pt-1">
+                    <button
+                      onClick={() => handleQuizAnswer("O")}
+                      disabled={showExplanation}
+                      className={`py-4 rounded-2xl font-black text-xl flex items-center justify-center gap-2 border-2 transition cursor-pointer ${
+                        selectedAnswer === "O"
+                          ? "bg-blue-600 text-white border-blue-700 shadow-md"
+                          : "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100"
+                      } ${showExplanation ? "opacity-90" : "active:scale-95"}`}
+                    >
+                      <CheckCircle2 className="w-6 h-6" /> 그렇다 (O)
+                    </button>
+                    <button
+                      onClick={() => handleQuizAnswer("X")}
+                      disabled={showExplanation}
+                      className={`py-4 rounded-2xl font-black text-xl flex items-center justify-center gap-2 border-2 transition cursor-pointer ${
+                        selectedAnswer === "X"
+                          ? "bg-rose-600 text-white border-rose-700 shadow-md"
+                          : "bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100"
+                      } ${showExplanation ? "opacity-90" : "active:scale-95"}`}
+                    >
+                      <XCircle className="w-6 h-6" /> 아니다 (X)
+                    </button>
+                  </div>
+
+                  {/* Result & Explanation */}
+                  {showExplanation && (
+                    <div className="space-y-3 animate-fadeIn">
+                      <div className={`p-3.5 rounded-xl border text-xs sm:text-sm font-medium leading-relaxed ${
+                        selectedAnswer === QUIZ_QUESTIONS[quizIdx].answer
+                          ? "bg-emerald-50 text-emerald-950 border-emerald-300"
+                          : "bg-rose-50 text-rose-950 border-rose-300"
+                      }`}>
+                        <div className="font-bold text-sm mb-1 flex items-center gap-1.5">
+                          {selectedAnswer === QUIZ_QUESTIONS[quizIdx].answer ? (
+                            <span className="text-emerald-600">🎉 정답입니다!</span>
+                          ) : (
+                            <span className="text-rose-600">😅 아쉬워요! 정답은 [{QUIZ_QUESTIONS[quizIdx].answer}]입니다.</span>
+                          )}
+                        </div>
+                        <p>{QUIZ_QUESTIONS[quizIdx].explanation}</p>
+                      </div>
+
+                      <button
+                        onClick={handleNextQuiz}
+                        className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl text-xs sm:text-sm transition cursor-pointer shadow-xs"
+                      >
+                        {quizIdx + 1 < QUIZ_QUESTIONS.length ? "다음 문제 풀기 ➡️" : "결과 확인하기 🏆"}
+                      </button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                /* Quiz Complete Screen */
+                <div className="text-center py-4 space-y-4 animate-fadeIn">
+                  <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-2xl shadow-inner">
+                    <Award className="w-10 h-10" />
+                  </div>
+                  <h3 className="text-lg font-black text-slate-900">
+                    축하합니다! 퀴즈 완주! 🎉
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-600">
+                    총 {QUIZ_QUESTIONS.length}문제 중 <strong className="text-purple-600 font-black text-base">{quizScore}문제</strong>를 맞추셨습니다!
+                  </p>
+                  <div className="p-3 bg-purple-50 rounded-xl border border-purple-200 text-xs text-purple-950 font-medium">
+                    💡 일할 때 나의 노동 권리를 아는 것이 나를 지키는 첫걸음입니다!
+                  </div>
+                  <div className="flex gap-2 pt-2">
+                    <button
+                      onClick={startQuiz}
+                      className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 rounded-xl text-xs transition cursor-pointer"
+                    >
+                      다시 풀기 🔄
+                    </button>
+                    <button
+                      onClick={() => setIsQuizOpen(false)}
+                      className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-xl text-xs transition cursor-pointer shadow-xs"
+                    >
+                      완료하고 챗봇 돌아가기
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Universal Image Full Viewer Modal */}
       {modalImage && (
