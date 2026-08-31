@@ -24,7 +24,8 @@ import {
   Download,
   Home,
   ScrollText,
-  BookOpen
+  BookOpen,
+  Scale
 } from "lucide-react";
 
 interface ActionItem {
@@ -112,22 +113,30 @@ export default function LaborRightsChatbot({ onClose }: Props) {
             아래에서 궁금하신 주제를 선택해 톡으로 바로 확인해보세요!
           </p>
 
-          {/* 대표 알바 십계명 / 근로조건 8 한눈에 보기 카드 */}
+          {/* 대표 알바 십계명 / 근로조건 8 / 성인 비교 한눈에 보기 카드 */}
           <div className="grid grid-cols-2 gap-2 text-xs font-bold pt-1">
             <button 
-              onClick={() => handleUserSelect("ten_commandments", "📜 청소년 알바 십계명 전체보기")}
-              className="col-span-2 bg-amber-400 hover:bg-amber-500 text-slate-900 border border-amber-500 p-2.5 rounded-xl text-center flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"
+              onClick={() => handleUserSelect("compare_adult", "⚖️ 청소년 vs 성인 근로조건 비교표")}
+              className="col-span-2 bg-[#ffde59] hover:bg-amber-400 text-slate-950 border border-amber-500 p-2.5 rounded-xl text-center flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"
             >
-              <ScrollText className="w-4 h-4 text-slate-900 shrink-0" />
-              <span>📜 청소년 알바 십계명 포스터 보기</span>
+              <Scale className="w-4 h-4 text-slate-950 shrink-0" />
+              <span>⚖️ 청소년 vs 성인 근로조건 비교표 한눈에 보기</span>
+            </button>
+
+            <button 
+              onClick={() => handleUserSelect("ten_commandments", "📜 청소년 알바 십계명 전체보기")}
+              className="bg-amber-100 hover:bg-amber-200 text-slate-900 border border-amber-300 p-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 transition shadow-xs cursor-pointer"
+            >
+              <ScrollText className="w-4 h-4 text-amber-700 shrink-0" />
+              <span>📜 알바 십계명 포스터</span>
             </button>
 
             <button 
               onClick={() => handleUserSelect("conditions_8", "📘 중3 근로조건 8가지 인포그래픽")}
-              className="col-span-2 bg-blue-600 hover:bg-blue-700 text-white border border-blue-700 p-2.5 rounded-xl text-center flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"
+              className="bg-blue-600 hover:bg-blue-700 text-white border border-blue-700 p-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 transition shadow-xs cursor-pointer"
             >
               <BookOpen className="w-4 h-4 text-white shrink-0" />
-              <span>📘 중3이 알아야 할 근로조건 8가지</span>
+              <span>📘 근로조건 8가지</span>
             </button>
           </div>
 
@@ -248,16 +257,116 @@ export default function LaborRightsChatbot({ onClose }: Props) {
     }, 300);
   };
 
-  // Knowledge base content generator (숫자 머리말 제거, 직관적 카테고리 구성)
+  // Helper for rendering comparison table
+  const renderComparisonTable = () => (
+    <div className="border border-blue-200 rounded-xl overflow-hidden shadow-xs my-2 bg-white">
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold p-2 text-center text-xs flex items-center justify-center gap-1.5">
+        <Scale className="w-4 h-4 text-amber-300" />
+        <span>⚖️ 청소년(18세 미만) vs 성인(18세 이상) 근로기준 비교</span>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr className="bg-slate-100 border-b border-slate-200 text-slate-800">
+              <th className="p-2 font-bold border-r border-slate-200 w-[28%]">구분</th>
+              <th className="p-2 font-bold text-blue-900 bg-blue-50/70 border-r border-slate-200 w-[36%]">👶 청소년 (18세 미만)</th>
+              <th className="p-2 font-bold text-slate-700 w-[36%]">🧑 성인 (18세 이상)</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-200 text-[11px] sm:text-xs">
+            <tr>
+              <td className="p-2 font-bold bg-slate-50 border-r border-slate-200">1. 법정근로시간</td>
+              <td className="p-2 bg-blue-50/30 border-r border-slate-200 font-bold text-blue-900">
+                1일 <span className="text-blue-700 font-black">7시간</span><br/>
+                1주 <span className="text-blue-700 font-black">35시간</span> 이내
+              </td>
+              <td className="p-2 text-slate-700">
+                1일 8시간<br/>
+                1주 40시간 이내
+              </td>
+            </tr>
+            <tr>
+              <td className="p-2 font-bold bg-slate-50 border-r border-slate-200">2. 연장근로 한도<br/><span className="font-normal text-[10px] text-slate-500">(합의 시)</span></td>
+              <td className="p-2 bg-blue-50/30 border-r border-slate-200 font-bold text-rose-700">
+                1일 <span className="underline font-black">최대 1시간</span><br/>
+                1주 <span className="underline font-black">최대 5시간</span> 제한!
+              </td>
+              <td className="p-2 text-slate-700">
+                1주 최대 12시간 이내
+              </td>
+            </tr>
+            <tr>
+              <td className="p-2 font-bold bg-slate-50 border-r border-slate-200">3. 야간근로<br/><span className="font-normal text-[10px] text-slate-500">(22:00~06:00)</span></td>
+              <td className="p-2 bg-blue-50/30 border-r border-slate-200 font-bold text-rose-700">
+                원칙적 <span className="bg-rose-100 text-rose-800 px-1 py-0.5 rounded font-black">금지 🚫</span><br/>
+                <span className="text-[10px] text-slate-600 font-normal">(동의 + 노동부장관 인가시만 가능)</span>
+              </td>
+              <td className="p-2 text-slate-700">
+                당사자 합의 시 가능 ⭕
+              </td>
+            </tr>
+            <tr>
+              <td className="p-2 font-bold bg-slate-50 border-r border-slate-200">4. 야간·연장 수당<br/><span className="font-normal text-[10px] text-slate-500">(5인 이상 사업장)</span></td>
+              <td className="p-2 bg-blue-50/30 border-r border-slate-200 font-bold text-emerald-800">
+                통상임금의 <span className="text-emerald-700 font-black">+50% 가산</span><br/>
+                <span className="text-[10px] text-emerald-600 font-normal">(성인과 100% 동일 적용!)</span>
+              </td>
+              <td className="p-2 text-slate-700">
+                통상임금의 +50% 가산
+              </td>
+            </tr>
+            <tr>
+              <td className="p-2 font-bold bg-slate-50 border-r border-slate-200">5. 최저임금</td>
+              <td className="p-2 bg-blue-50/30 border-r border-slate-200 font-bold text-blue-900">
+                2026년 <span className="text-blue-700 font-black">10,320원</span><br/>
+                <span className="text-[10px] text-blue-600 font-normal">(성인과 100% 동일!)</span>
+              </td>
+              <td className="p-2 text-slate-700">
+                2026년 10,320원
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
+  // Knowledge base content generator
   const getKnowledgeContent = (key: string): { title: string; content: React.ReactNode; actions: ActionItem[] } | null => {
     switch (key) {
+      case "compare_adult":
+        return {
+          title: "⚖️ 청소년 vs 성인 근로기준 한눈에 비교하기",
+          actions: [
+            { label: "⏰ 근로시간·휴게시간 규정", key: "06_hours" },
+            { label: "🌙 야간·연장 가산수당 기준", key: "07_allowance" },
+            { label: "🧮 급여 모의 계산기", key: "open_calc" }
+          ],
+          content: (
+            <div className="space-y-3 text-xs sm:text-sm text-slate-700">
+              <p className="text-xs text-slate-700 leading-relaxed">
+                청소년(18세 미만)은 신체적·정신적 성장기이므로 <strong>근로시간, 연장근로, 야간근로에 있어 성인보다 법적으로 더 강력한 보호 기준</strong>이 적용됩니다.
+              </p>
+
+              {renderComparisonTable()}
+
+              <div className="bg-blue-50 p-2.5 rounded-lg border border-blue-200 text-blue-950 text-xs">
+                <strong>💡 핵심 정리:</strong><br />
+                · 청소년은 성인보다 일할 수 있는 시간(하루 7시간/주 35시간)과 연장근로(하루 1시간/주 5시간)가 <strong>더 짧게 제한</strong>됩니다.<br />
+                · 밤 10시~아침 6시 야간근로는 <strong>원칙적으로 금지</strong>됩니다.<br />
+                · 최저임금(10,320원)과 가산수당(+50%)은 <strong>성인과 동일하게 100% 보장</strong>받습니다!
+              </div>
+            </div>
+          )
+        };
+
       case "ten_commandments":
         return {
           title: "📜 청소년 알바 십계명 (10가지 필수 규칙)",
           actions: [
+            { label: "⚖️ 청소년 vs 성인 비교표", key: "compare_adult" },
             { label: "🔍 십계명 포스터 크게보기", key: "open_ten_img" },
-            { label: "📘 근로조건 8가지 인포그래픽", key: "conditions_8" },
-            { label: "📝 근로계약서 작성법", key: "03_contract" }
+            { label: "📘 근로조건 8가지 인포그래픽", key: "conditions_8" }
           ],
           content: (
             <div className="space-y-3 text-xs sm:text-sm text-slate-700">
@@ -306,8 +415,8 @@ export default function LaborRightsChatbot({ onClose }: Props) {
         return {
           title: "📘 중3이 꼭 알아야 할 최소한의 근로조건 8가지",
           actions: [
+            { label: "⚖️ 청소년 vs 성인 비교표", key: "compare_adult" },
             { label: "🔍 인포그래픽 크게보기", key: "open_8_img" },
-            { label: "📜 청소년 알바 십계명 보기", key: "ten_commandments" },
             { label: "🧮 알바비 급여 계산기", key: "open_calc" }
           ],
           content: (
@@ -450,6 +559,7 @@ export default function LaborRightsChatbot({ onClose }: Props) {
         return {
           title: "최저임금 원칙 (성인과 동일 적용)",
           actions: [
+            { label: "⚖️ 청소년 vs 성인 비교표", key: "compare_adult" },
             { label: "🧮 2026 최저시급 급여 계산기", key: "open_calc" },
             { label: "🎁 주휴수당 조건 보기", key: "08_holiday" }
           ],
@@ -501,30 +611,36 @@ export default function LaborRightsChatbot({ onClose }: Props) {
       case "06_hours":
       case "hours":
         return {
-          title: "근로시간 및 휴게시간 규정",
+          title: "근로시간 및 휴게시간 규정 (성인과 비교)",
           actions: [
+            { label: "⚖️ 청소년 vs 성인 비교표 보기", key: "compare_adult" },
             { label: "🌙 야간·연장 가산수당 조건", key: "07_allowance" },
             { label: "🎁 주휴수당 조건 보기", key: "08_holiday" }
           ],
           content: (
-            <div className="space-y-2 text-xs sm:text-sm text-slate-700">
-              <div className="bg-blue-50 p-2.5 rounded-lg border-l-4 border-blue-500">
-                <strong className="text-blue-900 block mb-1">📌 청소년 법정 근로시간</strong>
-                <div className="flex justify-between text-blue-800">
-                  <span>· 1일 근로시간: <strong>7시간 이내</strong></span>
-                  <span>· 1주일 근로시간: <strong>35시간 이내</strong></span>
-                </div>
-                <p className="text-xs text-blue-700 mt-1">
-                  * 연장근로는 당사자 합의 시 1일 1시간, 1주 5시간까지만 가능!
+            <div className="space-y-3 text-xs sm:text-sm text-slate-700">
+              <div className="bg-blue-50 p-2.5 rounded-lg border-l-4 border-blue-500 space-y-1">
+                <strong className="text-blue-900 block font-bold">👶 1. 기본 법정근로시간</strong>
+                <p className="text-blue-950">
+                  청소년(18세 미만)은 <strong>1일 최대 7시간, 1주일 최대 35시간 이내</strong>로 엄격히 제한됩니다. (성인은 1일 8시간 / 주 40시간)
                 </p>
               </div>
 
-              <div className="bg-emerald-50 p-2.5 rounded-lg border-l-4 border-emerald-500">
-                <strong className="text-emerald-900 block mb-1">☕ 휴게시간 필수 보장</strong>
-                <p className="text-xs text-emerald-800">
-                  · 4시간 일하면 <strong>30분 이상</strong>, 8시간 일하면 <strong>1시간 이상</strong> 휴게시간을 주어야 합니다. (대기시간은 근무시간에 포함!)
+              <div className="bg-rose-50 p-2.5 rounded-lg border-l-4 border-rose-400 space-y-1">
+                <strong className="text-rose-900 block font-bold">⏱️ 2. 연장근로 엄격 제한</strong>
+                <p className="text-rose-950">
+                  청소년 근로자와 사용자의 <strong>합의가 있는 경우에만</strong> 가능하며, 합의하더라도 <strong>1일 1시간, 1주일 5시간을 초과하여 일할 수 없습니다.</strong> (성인은 주 12시간까지 가능)
                 </p>
               </div>
+
+              <div className="bg-emerald-50 p-2.5 rounded-lg border-l-4 border-emerald-500 space-y-1">
+                <strong className="text-emerald-900 block font-bold">☕ 3. 휴게시간 보장</strong>
+                <p className="text-emerald-950">
+                  4시간 일하면 <strong>30분 이상</strong>, 8시간 일하면 <strong>1시간 이상</strong> 휴게시간을 필수 보장받습니다. (성인과 동일)
+                </p>
+              </div>
+
+              {renderComparisonTable()}
             </div>
           )
         };
@@ -532,23 +648,30 @@ export default function LaborRightsChatbot({ onClose }: Props) {
       case "07_allowance":
       case "allowance":
         return {
-          title: "야간·연장 가산수당 (5인 이상 사업장)",
+          title: "야간·연장 가산수당 (상시 5인 이상 사업장)",
           actions: [
+            { label: "⚖️ 청소년 vs 성인 비교표 보기", key: "compare_adult" },
             { label: "🎁 주휴수당 조건 보기", key: "08_holiday" },
             { label: "🏥 산재보상 처리 보기", key: "09_injury" }
           ],
           content: (
-            <div className="space-y-2 text-xs sm:text-sm text-slate-700">
-              <div className="bg-purple-50 p-2.5 rounded-lg border-l-4 border-purple-500">
-                <strong className="text-purple-950 block mb-1">📌 가산 임금 (+50%)</strong>
-                <p className="text-purple-900">
-                  상시 근로자 5명 이상 사업장에서 <strong>휴일 근무나 야간/연장 초과 근무 시 50%의 가산 임금</strong>을 받을 수 있습니다.
+            <div className="space-y-3 text-xs sm:text-sm text-slate-700">
+              <div className="bg-rose-50 p-2.5 rounded-lg border-l-4 border-rose-400 space-y-1">
+                <strong className="text-rose-900 block font-bold">🌙 1. 야간근로 원칙적 금지</strong>
+                <p className="text-rose-950">
+                  야간근로 기준: <strong>밤 10시(22:00)부터 다음 날 오전 6시(06:00) 사이</strong>의 근로.<br />
+                  청소년은 야간근로가 <strong>원칙적으로 금지</strong>되며, 본인 동의 + 고용노동부장관 인가를 받은 예외적 경우에만 가능합니다.
                 </p>
               </div>
-              <div className="bg-slate-100 p-2 text-xs space-y-1 rounded-lg">
-                <p>🌙 야간근로 (밤 10시 ~ 아침 6시): +50% 가산</p>
-                <p>⏱️ 연장근로 (약속시간 초과): +50% 가산</p>
+
+              <div className="bg-purple-50 p-2.5 rounded-lg border-l-4 border-purple-500 space-y-1">
+                <strong className="text-purple-950 block font-bold">💰 2. 야간·연장 가산수당 (+50%)</strong>
+                <p className="text-purple-950">
+                  상시근로자 <strong>5인 이상 사업장</strong>인 경우, 야간근로 및 법정/소정근로시간을 초과한 연장근로 시 <strong>통상임금의 50%를 가산하여 지급(+50%)</strong> 받아야 합니다. (성인과 동일!)
+                </p>
               </div>
+
+              {renderComparisonTable()}
             </div>
           )
         };
@@ -680,6 +803,7 @@ export default function LaborRightsChatbot({ onClose }: Props) {
     let queryKey = key;
     if (key.startsWith("quick_")) {
       const mapping: Record<string, string> = {
+        quick_compare: "compare_adult",
         quick_commandments: "ten_commandments",
         quick_conditions8: "conditions_8",
         quick_contract: "03_contract",
@@ -709,7 +833,9 @@ export default function LaborRightsChatbot({ onClose }: Props) {
     const lower = text.toLowerCase();
     let matchedKey: string | null = null;
 
-    if (lower.includes("십계명") || lower.includes("10개") || lower.includes("규칙")) {
+    if (lower.includes("비교") || lower.includes("성인") || lower.includes("차이")) {
+      matchedKey = "compare_adult";
+    } else if (lower.includes("십계명") || lower.includes("10개") || lower.includes("규칙")) {
       matchedKey = "ten_commandments";
     } else if (lower.includes("중3") || lower.includes("근로조건") || lower.includes("8가지") || lower.includes("최소한")) {
       matchedKey = "conditions_8";
@@ -756,7 +882,7 @@ export default function LaborRightsChatbot({ onClose }: Props) {
             &quot;<strong>{text}</strong>&quot; 관련 주요 항목을 아래 메뉴에서 선택해보세요!
           </p>
           <div className="grid grid-cols-2 gap-1.5 text-xs">
-            <button onClick={() => handleUserSelect("ten_commandments")} className="col-span-2 bg-amber-100 hover:bg-amber-200 text-left p-2 rounded-lg font-bold text-amber-950 cursor-pointer">📜 알바 십계명 포스터 전체보기</button>
+            <button onClick={() => handleUserSelect("compare_adult")} className="col-span-2 bg-[#ffde59] hover:bg-amber-400 text-left p-2 rounded-lg font-bold text-slate-950 cursor-pointer">⚖️ 청소년 vs 성인 근로조건 비교표</button>
             <button onClick={() => handleUserSelect("01_age")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">연령 및 취업조건</button>
             <button onClick={() => handleUserSelect("02_docs")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">부모님 동의서·서류</button>
             <button onClick={() => handleUserSelect("03_contract")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">근로계약서 작성</button>
@@ -962,8 +1088,14 @@ export default function LaborRightsChatbot({ onClose }: Props) {
         <div className="bg-white/95 backdrop-blur-md border-t border-slate-200/80 p-2 shrink-0 z-10">
           <div className="flex gap-2 overflow-x-auto pb-1.5 pt-0.5 px-1 text-xs font-semibold no-scrollbar">
             <button 
+              onClick={() => handleUserSelect("quick_compare")} 
+              className="whitespace-nowrap px-3 py-1.5 rounded-full bg-[#ffde59] hover:bg-amber-400 text-slate-950 font-bold border border-amber-500 transition shrink-0 flex items-center gap-1 cursor-pointer shadow-xs"
+            >
+              ⚖️ 청소년 vs 성인 비교
+            </button>
+            <button 
               onClick={() => handleUserSelect("quick_commandments")} 
-              className="whitespace-nowrap px-3 py-1.5 rounded-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold border border-amber-500 transition shrink-0 flex items-center gap-1 cursor-pointer shadow-xs"
+              className="whitespace-nowrap px-3 py-1.5 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold border border-amber-300 transition shrink-0 flex items-center gap-1 cursor-pointer"
             >
               📜 알바 십계명
             </button>
@@ -1012,7 +1144,7 @@ export default function LaborRightsChatbot({ onClose }: Props) {
                 type="text" 
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder="궁금한 내용을 질문해보세요 (예: 최저임금, 근로시간, 십계명)" 
+                placeholder="질문해보세요 (예: 비교, 최저임금, 근로시간, 야간)" 
                 className="w-full bg-slate-100 border border-slate-300 focus:border-blue-500 focus:bg-white focus:outline-none text-xs sm:text-sm rounded-full py-2.5 pl-4 pr-9 transition text-slate-800 placeholder-slate-400 font-medium"
                 onKeyDown={(e) => e.key === "Enter" && handleSendTextMessage()}
               />
