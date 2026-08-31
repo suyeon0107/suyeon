@@ -56,6 +56,12 @@ export default function Header() {
             <span>⚖️ 인권구제 가이드</span>
           </Link>
           <Link 
+            href="/labor-rights" 
+            className="text-xs sm:text-sm font-bold text-slate-700 hover:text-indigo-600 transition-colors duration-200 flex items-center gap-1 whitespace-nowrap shrink-0"
+          >
+            <span>🤖 노동인권 챗봇</span>
+          </Link>
+          <Link 
             href="/social-quiz" 
             className="text-xs sm:text-sm font-bold text-slate-700 hover:text-indigo-600 transition-colors duration-200 flex items-center gap-1 whitespace-nowrap shrink-0"
           >
@@ -141,6 +147,13 @@ export default function Header() {
               onClick={() => setIsMenuOpen(false)}
             >
               ⚖️ 인권구제 가이드
+            </Link>
+            <Link
+              href="/labor-rights"
+              className="block rounded-xl px-3 py-2 font-medium text-slate-700 hover:bg-slate-100"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              🤖 노동인권 챗봇
             </Link>
             <Link
               href="/social-quiz"

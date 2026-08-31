@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { 
   ShieldCheck, 
   Send, 
@@ -20,7 +22,11 @@ import {
   Gift, 
   Moon, 
   Maximize2,
-  Download
+  Download,
+  Home,
+  ScrollText,
+  CheckCircle2,
+  BookOpen
 } from "lucide-react";
 
 interface ActionItem {
@@ -38,7 +44,12 @@ interface MessageItem {
   time: string;
 }
 
-export default function LaborRightsChatbot() {
+interface Props {
+  onClose?: () => void;
+}
+
+export default function LaborRightsChatbot({ onClose }: Props) {
+  const router = useRouter();
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [inputText, setInputText] = useState("");
@@ -46,7 +57,7 @@ export default function LaborRightsChatbot() {
   // Modal states
   const [isCalcOpen, setIsCalcOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
-  const [isContractImgOpen, setIsContractImgOpen] = useState(false);
+  const [modalImage, setModalImage] = useState<{ title: string; src: string; downloadName: string } | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Calculator states
@@ -77,6 +88,13 @@ export default function LaborRightsChatbot() {
     }, 80);
   };
 
+  const handleGoHome = () => {
+    if (onClose) {
+      onClose();
+    }
+    router.push("/");
+  };
+
   // Welcome flow on mount
   useEffect(() => {
     initWelcomeFlow();
@@ -93,65 +111,92 @@ export default function LaborRightsChatbot() {
         <div className="space-y-3">
           <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
             한국공인노무사회 & 청소년근로권익센터가 전하는 <strong>일하는 청소년을 위한 노동인권 핵심 가이드</strong>입니다.<br />
-            아르바이트를 시작하거나 일하면서 궁금했던 점을 아래 메뉴에서 톡으로 바로 확인해보세요!
+            궁금하신 <strong>청소년 알바 십계명(01~10)</strong> 메뉴를 선택해보세요!
           </p>
-          <div className="grid grid-cols-2 gap-2 text-xs font-semibold pt-1">
+
+          {/* 대표 알바 십계명 / 근로조건 8 한눈에 보기 카드 */}
+          <div className="grid grid-cols-2 gap-2 text-xs font-bold pt-1">
             <button 
-              onClick={() => handleUserSelect("contract", "01. 근로계약서 알려줘")}
-              className="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 p-2.5 rounded-xl text-left flex items-center gap-1.5 transition cursor-pointer"
+              onClick={() => handleUserSelect("ten_commandments", "📜 청소년 알바 십계명 전체보기")}
+              className="col-span-2 bg-amber-400 hover:bg-amber-500 text-slate-900 border border-amber-500 p-2.5 rounded-xl text-center flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"
             >
-              <FileText className="w-4 h-4 text-amber-600 shrink-0" />
-              <span>01. 근로계약서</span>
+              <ScrollText className="w-4 h-4 text-slate-900 shrink-0" />
+              <span>📜 청소년 알바 십계명 (01~10) 한눈에 보기</span>
             </button>
+
             <button 
-              onClick={() => handleUserSelect("age_places", "02. 일할 수 있는 연령/장소 알려줘")}
-              className="bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 p-2.5 rounded-xl text-left flex items-center gap-1.5 transition cursor-pointer"
+              onClick={() => handleUserSelect("conditions_8", "📘 중3 근로조건 8가지 인포그래픽")}
+              className="col-span-2 bg-blue-600 hover:bg-blue-700 text-white border border-blue-700 p-2.5 rounded-xl text-center flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"
             >
-              <ShieldCheck className="w-4 h-4 text-indigo-600 shrink-0" />
-              <span>02. 연령 및 장소</span>
+              <BookOpen className="w-4 h-4 text-white shrink-0" />
+              <span>📘 중3이 알아야 할 근로조건 8 인포그래픽</span>
             </button>
-            <button 
-              onClick={() => handleUserSelect("wage", "04. 최저임금 원칙 알려줘")}
-              className="bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 p-2.5 rounded-xl text-left flex items-center gap-1.5 transition cursor-pointer"
-            >
-              <Coins className="w-4 h-4 text-blue-600 shrink-0" />
-              <span>04. 최저임금 원칙</span>
-            </button>
-            <button 
-              onClick={() => handleUserSelect("weekly_holiday", "05. 주휴수당 조건 알려줘")}
-              className="bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200 p-2.5 rounded-xl text-left flex items-center gap-1.5 transition cursor-pointer"
-            >
-              <Gift className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>05. 주휴수당</span>
-            </button>
-            <button 
-              onClick={() => handleUserSelect("allowance", "06. 야간/연장 가산수당 알려줘")}
-              className="bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200 p-2.5 rounded-xl text-left flex items-center gap-1.5 transition cursor-pointer"
-            >
-              <Moon className="w-4 h-4 text-purple-600 shrink-0" />
-              <span>06. 가산수당 (5인이상)</span>
-            </button>
-            <button 
-              onClick={() => handleUserSelect("hours", "08. 근로시간 및 휴게시간 알려줘")}
-              className="bg-sky-50 hover:bg-sky-100 text-sky-900 border border-sky-200 p-2.5 rounded-xl text-left flex items-center gap-1.5 transition cursor-pointer"
-            >
-              <Clock className="w-4 h-4 text-sky-600 shrink-0" />
-              <span>08. 근로·휴게시간</span>
-            </button>
-            <button 
-              onClick={() => handleUserSelect("rights_protect", "10. 부당해고/산재/괴롭힘 대처법")}
-              className="bg-rose-50 hover:bg-rose-100 text-rose-900 border border-rose-200 p-2.5 rounded-xl text-left flex items-center gap-1.5 transition cursor-pointer"
-            >
-              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
-              <span>10-14. 권익·구제</span>
-            </button>
-            <button 
-              onClick={() => handleUserSelect("counseling", "무료 1:1 상담 연결")}
-              className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold p-2.5 rounded-xl text-left flex items-center gap-1.5 transition shadow-xs cursor-pointer"
-            >
-              <HeartHandshake className="w-4 h-4 text-slate-900 shrink-0" />
-              <span>1:1 노무사 무료상담</span>
-            </button>
+          </div>
+
+          <div className="border-t border-slate-200 pt-2.5">
+            <p className="text-[11px] font-bold text-slate-500 mb-2">📌 순서별 세부항목 (01 ~ 10)</p>
+            <div className="grid grid-cols-2 gap-1.5 text-xs font-semibold">
+              <button 
+                onClick={() => handleUserSelect("01_age", "01. 연령 조건 알려줘")}
+                className="bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 p-2 rounded-lg text-left flex items-center gap-1 transition cursor-pointer"
+              >
+                <span>01. 연령 조건</span>
+              </button>
+              <button 
+                onClick={() => handleUserSelect("02_docs", "02. 필수 서류 알려줘")}
+                className="bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200 p-2 rounded-lg text-left flex items-center gap-1 transition cursor-pointer"
+              >
+                <span>02. 필수 서류</span>
+              </button>
+              <button 
+                onClick={() => handleUserSelect("03_contract", "03. 근로계약서 알려줘")}
+                className="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 p-2 rounded-lg text-left flex items-center gap-1 transition cursor-pointer"
+              >
+                <span>03. 근로계약서</span>
+              </button>
+              <button 
+                onClick={() => handleUserSelect("04_wage", "04. 최저임금 원칙 알려줘")}
+                className="bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 p-2 rounded-lg text-left flex items-center gap-1 transition cursor-pointer"
+              >
+                <span>04. 최저임금</span>
+              </button>
+              <button 
+                onClick={() => handleUserSelect("05_forbidden", "05. 유해업소 금지 규정 알려줘")}
+                className="bg-rose-50 hover:bg-rose-100 text-rose-900 border border-rose-200 p-2 rounded-lg text-left flex items-center gap-1 transition cursor-pointer"
+              >
+                <span>05. 유해업소 금지</span>
+              </button>
+              <button 
+                onClick={() => handleUserSelect("06_hours", "06. 근로·휴게시간 알려줘")}
+                className="bg-sky-50 hover:bg-sky-100 text-sky-900 border border-sky-200 p-2 rounded-lg text-left flex items-center gap-1 transition cursor-pointer"
+              >
+                <span>06. 근로·휴게시간</span>
+              </button>
+              <button 
+                onClick={() => handleUserSelect("07_allowance", "07. 가산수당 조건 알려줘")}
+                className="bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200 p-2 rounded-lg text-left flex items-center gap-1 transition cursor-pointer"
+              >
+                <span>07. 가산수당</span>
+              </button>
+              <button 
+                onClick={() => handleUserSelect("08_holiday", "08. 주휴수당 알려줘")}
+                className="bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200 p-2 rounded-lg text-left flex items-center gap-1 transition cursor-pointer"
+              >
+                <span>08. 주휴수당</span>
+              </button>
+              <button 
+                onClick={() => handleUserSelect("09_injury", "09. 산재보상 처리 알려줘")}
+                className="bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200 p-2 rounded-lg text-left flex items-center gap-1 transition cursor-pointer"
+              >
+                <span>09. 산재보상</span>
+              </button>
+              <button 
+                onClick={() => handleUserSelect("10_counseling", "10. 1:1 상담 연결해줘")}
+                className="bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold p-2 rounded-lg text-left flex items-center gap-1 transition cursor-pointer"
+              >
+                <span>10. 1:1 상담구제</span>
+              </button>
+            </div>
           </div>
         </div>
       )
@@ -195,67 +240,115 @@ export default function LaborRightsChatbot() {
     }, 300);
   };
 
-  // Knowledge base content generator
+  // Knowledge base content generator (Standardized 01 ~ 10 Sequential Order)
   const getKnowledgeContent = (key: string): { title: string; content: React.ReactNode; actions: ActionItem[] } | null => {
     switch (key) {
-      case "contract":
+      case "ten_commandments":
         return {
-          title: "01. 근로계약서 작성 및 교부",
+          title: "📜 청소년 알바 십계명 (10가지 필수 규칙)",
           actions: [
-            { label: "🔍 근로계약서 서식 크게보기", key: "open_contract_img" },
-            { label: "💰 최저임금 & 주휴수당 확인", key: "wage" },
-            { label: "⏰ 청소년 근로시간 기준", key: "hours" }
+            { label: "🔍 십계명 이미지 크게보기", key: "open_ten_img" },
+            { label: "📘 근로조건 8가지 인포그래픽", key: "conditions_8" },
+            { label: "📝 03. 근로계약서 확인", key: "03_contract" }
           ],
           content: (
-            <div className="space-y-2.5 text-xs sm:text-sm text-slate-700">
-              <div className="bg-amber-50 p-2.5 rounded-lg border-l-4 border-amber-400">
-                <p className="font-bold text-amber-900 mb-0.5">📌 필수 원칙</p>
-                <p>근로계약서는 <strong>사용자와 근로자가 1부씩 각각 나누어</strong> 가져야 합니다.</p>
-              </div>
-
-              {/* 연소근로자 표준근로계약서 이미지 프리뷰 */}
-              <div className="my-2 border border-slate-200 rounded-xl overflow-hidden bg-slate-50 shadow-sm group">
-                <div className="p-2 bg-blue-50 border-b border-blue-100 flex justify-between items-center text-xs font-bold text-blue-900">
+            <div className="space-y-3 text-xs sm:text-sm text-slate-700">
+              <div 
+                onClick={() => setModalImage({
+                  title: "청소년 알바 십계명 인포그래픽",
+                  src: "/youth-ten-commandments.png",
+                  downloadName: "청소년_알바_십계명.png"
+                })}
+                className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50 cursor-pointer group shadow-xs"
+              >
+                <div className="p-2 bg-amber-100 border-b border-amber-200 flex justify-between items-center text-xs font-bold text-amber-950">
                   <span className="flex items-center gap-1">
-                    <FileText className="w-3.5 h-3.5 text-blue-600" />
-                    연소근로자(18세 미만) 표준근로계약서 서식
+                    <ScrollText className="w-3.5 h-3.5 text-amber-700" />
+                    청소년 알바 십계명 공식 포스터
                   </span>
-                  <button 
-                    onClick={() => setIsContractImgOpen(true)}
-                    className="text-[11px] text-blue-600 hover:text-blue-800 flex items-center gap-1 font-semibold cursor-pointer"
-                  >
+                  <span className="text-[11px] text-amber-800 flex items-center gap-0.5">
                     <Maximize2 className="w-3 h-3" /> 크게보기
-                  </button>
+                  </span>
                 </div>
-                <div 
-                  onClick={() => setIsContractImgOpen(true)}
-                  className="relative cursor-pointer overflow-hidden bg-slate-100 flex justify-center items-center"
-                >
-                  <img 
-                    src="/labor-contract.png" 
-                    alt="연소근로자(18세 미만인 자) 표준근로계약서" 
-                    className="w-full h-auto max-h-56 object-cover object-top hover:scale-105 transition duration-300"
-                  />
-                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white font-bold text-xs gap-1.5 backdrop-blur-[1px]">
-                    <Maximize2 className="w-4 h-4" /> Click하여 전체 서식 확인
-                  </div>
-                </div>
+                <img 
+                  src="/youth-ten-commandments.png" 
+                  alt="청소년 알바 십계명 포스터" 
+                  className="w-full h-auto max-h-60 object-cover object-top group-hover:scale-105 transition duration-300"
+                />
               </div>
 
-              <ul className="list-disc list-inside space-y-1 text-slate-600 pl-1 leading-relaxed">
-                <li><strong>미작성/미교부 처벌:</strong> 위반 시 사업주에게 <span className="text-rose-600 font-bold">500만 원 이하의 벌금</span>이 부과됩니다.</li>
-                <li><strong>필수 기재사항:</strong> 임금(시급/월급), 근로시간, 주휴일, 연차유급휴가, 근무 장소 및 업무 내용.</li>
-                <li><strong>양식 다운로드:</strong> 표준근로계약서 5종은 <em>청소년근로권익센터 [자료실]</em>에서 다운받으실 수 있습니다.</li>
-              </ul>
+              <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-1.5 leading-relaxed text-xs">
+                <div className="font-bold text-slate-900 text-xs mb-1">📋 알바 십계명 요약</div>
+                <p><strong>01.</strong> 만 15세 이상 청소년만 알바 가능 (13~14세는 취직인허가증 필요)</p>
+                <p><strong>02.</strong> 부모님 동의서 및 가족관계증명서 작성·비치 필수</p>
+                <p><strong>03.</strong> 시급, 근로시간 등이 기재된 근로계약서 1부 교부받기</p>
+                <p><strong>04.</strong> 성인과 동일한 최저임금 적용 (2026년 10,320원)</p>
+                <p><strong>05.</strong> 유흥주점, PC방 야간 등 유해 업종 취업 금지</p>
+                <p><strong>06.</strong> 하루 7시간, 일주일 35시간 이내 근로</p>
+                <p><strong>07.</strong> 5인 이상 사업장 연장·야간·휴일 근로 시 50% 가산수당</p>
+                <p><strong>08.</strong> 주 15시간 이상 개근 시 1일 유급휴일 (주휴수당)</p>
+                <p><strong>09.</strong> 일하다 다쳤을 때 100% 산재보험 치료 및 보상</p>
+                <p><strong>10.</strong> 부당 처우 시 청소년상담 #1388 / 센터 1644-3119 1:1 상담</p>
+              </div>
             </div>
           )
         };
+
+      case "conditions_8":
+        return {
+          title: "📘 중3이 꼭 알아야 할 최소한의 근로조건 8",
+          actions: [
+            { label: "🔍 인포그래픽 크게보기", key: "open_8_img" },
+            { label: "📜 청소년 알바 십계명 보기", key: "ten_commandments" },
+            { label: "🧮 알바비 급여 계산기", key: "open_calc" }
+          ],
+          content: (
+            <div className="space-y-3 text-xs sm:text-sm text-slate-700">
+              <div 
+                onClick={() => setModalImage({
+                  title: "중3이 꼭 알아야 할 최소한의 근로조건 8",
+                  src: "/labor-conditions-8.png",
+                  downloadName: "중3_최소한의_근로조건_8.png"
+                })}
+                className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50 cursor-pointer group shadow-xs"
+              >
+                <div className="p-2 bg-blue-100 border-b border-blue-200 flex justify-between items-center text-xs font-bold text-blue-950">
+                  <span className="flex items-center gap-1">
+                    <BookOpen className="w-3.5 h-3.5 text-blue-700" />
+                    중3 근로조건 8가지 인포그래픽
+                  </span>
+                  <span className="text-[11px] text-blue-800 flex items-center gap-0.5">
+                    <Maximize2 className="w-3 h-3" /> 크게보기
+                  </span>
+                </div>
+                <img 
+                  src="/labor-conditions-8.png" 
+                  alt="중3이 꼭 알아야 할 최소한의 근로조건 8" 
+                  className="w-full h-auto max-h-60 object-cover object-top group-hover:scale-105 transition duration-300"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-1.5 text-xs font-medium">
+                <div className="bg-slate-50 p-2 rounded-lg border border-slate-200"><strong>01 근로계약서:</strong> 꼭 써서 1장 챙겨요</div>
+                <div className="bg-slate-50 p-2 rounded-lg border border-slate-200"><strong>02 필수서류:</strong> 부모님 동의서 제출</div>
+                <div className="bg-slate-50 p-2 rounded-lg border border-slate-200"><strong>03 최저임금:</strong> 2026년 10,320원</div>
+                <div className="bg-slate-50 p-2 rounded-lg border border-slate-200"><strong>04 근로시간:</strong> 하루 7h, 주 35h 이내</div>
+                <div className="bg-slate-50 p-2 rounded-lg border border-slate-200"><strong>05 야간근무:</strong> 밤 10시~새벽 6시 금지</div>
+                <div className="bg-slate-50 p-2 rounded-lg border border-slate-200"><strong>06 휴게시간:</strong> 4h당 30분 쉬어요</div>
+                <div className="bg-slate-50 p-2 rounded-lg border border-slate-200"><strong>07 주휴수당:</strong> 주 15h 이상 개근시</div>
+                <div className="bg-slate-50 p-2 rounded-lg border border-slate-200"><strong>08 손해배상:</strong> 깨뜨려도 깎지 못함</div>
+              </div>
+            </div>
+          )
+        };
+
+      case "01_age":
       case "age_places":
         return {
-          title: "02. 취업할 수 있는 연령 및 장소",
+          title: "01. 연령 조건 (만 15세 이상 근로)",
           actions: [
-            { label: "📝 근로계약서 작성법", key: "contract" },
-            { label: "🛡️ 부당대우 상담하기", key: "counseling" }
+            { label: "📑 02. 필수 제출 서류 확인", key: "02_docs" },
+            { label: "🚫 05. 유해 업종 금지 규정", key: "05_forbidden" }
           ],
           content: (
             <div className="space-y-2 text-xs sm:text-sm text-slate-700">
@@ -269,310 +362,270 @@ export default function LaborRightsChatbot() {
                   <span className="text-blue-800 font-bold">취직인허증 필요 📄</span>
                 </div>
               </div>
-              <div className="bg-amber-50 p-2.5 rounded-lg text-amber-900">
-                <strong>만 18세 미만 청소년 필수 준비서류:</strong><br />
-                ① 가족관계증명서 + ② 친권자(후견인) 동의서
-              </div>
-              <div className="bg-rose-50 p-2.5 rounded-lg text-rose-900 border-l-4 border-rose-400">
-                <strong>🚫 취업 금지 업종 (청소년 유해업소):</strong><br />
-                유흥주점, 단란주점, 비디오방, 노래연습장(청소년실 제외 유흥), PC방(야간제한), 성인용품점, 숙박업, 안마시술소 등
+              <div className="bg-amber-50 p-2.5 rounded-lg text-amber-900 leading-relaxed">
+                <strong>📌 십계명 1항:</strong> 원칙적으로 만 15세 이상의 청소년만 아르바이트 및 시간제 근로가 가능합니다. (만 13~14세는 지방고용노동관 취직인허증 필수)
               </div>
             </div>
           )
         };
+
+      case "02_docs":
+        return {
+          title: "02. 필수 서류 (부모님 동의서 & 증명서)",
+          actions: [
+            { label: "📝 03. 근로계약서 작성법", key: "03_contract" },
+            { label: "💵 04. 최저임금 기준 확인", key: "04_wage" }
+          ],
+          content: (
+            <div className="space-y-2 text-xs sm:text-sm text-slate-700">
+              <div className="bg-amber-50 p-2.5 rounded-lg text-amber-900 border-l-4 border-amber-400">
+                <strong>📌 십계명 2항 (필수 제출 서류):</strong><br />
+                만 18세 미만 청소년이 일할 때는 사업장에 다음 2가지 서류를 반드시 제출하고 비치해야 합니다.<br />
+                ① <strong>친권자(부모님) 또는 후견인 동의서</strong><br />
+                ② <strong>가족관계증명서</strong>
+              </div>
+            </div>
+          )
+        };
+
+      case "03_contract":
+      case "contract":
+        return {
+          title: "03. 근로계약서 작성 및 1부 교부",
+          actions: [
+            { label: "🔍 표준계약서 서식 크게보기", key: "open_contract_img" },
+            { label: "💵 04. 최저임금 기준", key: "04_wage" },
+            { label: "⏰ 06. 근로시간 한도", key: "06_hours" }
+          ],
+          content: (
+            <div className="space-y-2.5 text-xs sm:text-sm text-slate-700">
+              <div className="bg-amber-50 p-2.5 rounded-lg border-l-4 border-amber-400">
+                <p className="font-bold text-amber-900 mb-0.5">📌 십계명 3항 (1부 교부 의무)</p>
+                <p>근로계약서는 일하기 전 시급, 근로시간, 휴일, 업무내용을 적고 <strong>사용자와 근로자가 1부씩 나누어</strong> 가져야 합니다.</p>
+              </div>
+
+              {/* 연소근로자 표준근로계약서 이미지 프리뷰 */}
+              <div 
+                onClick={() => setModalImage({
+                  title: "연소근로자(18세 미만) 표준근로계약서 서식",
+                  src: "/labor-contract.png",
+                  downloadName: "연소근로자_표준근로계약서.png"
+                })}
+                className="my-2 border border-slate-200 rounded-xl overflow-hidden bg-slate-50 shadow-sm group cursor-pointer"
+              >
+                <div className="p-2 bg-blue-50 border-b border-blue-100 flex justify-between items-center text-xs font-bold text-blue-900">
+                  <span className="flex items-center gap-1">
+                    <FileText className="w-3.5 h-3.5 text-blue-600" />
+                    연소근로자(18세 미만) 표준근로계약서 서식
+                  </span>
+                  <span className="text-[11px] text-blue-600 flex items-center gap-1 font-semibold">
+                    <Maximize2 className="w-3 h-3" /> 크게보기
+                  </span>
+                </div>
+                <img 
+                  src="/labor-contract.png" 
+                  alt="연소근로자 표준근로계약서" 
+                  className="w-full h-auto max-h-52 object-cover object-top group-hover:scale-105 transition duration-300"
+                />
+              </div>
+
+              <ul className="list-disc list-inside space-y-1 text-slate-600 pl-1 leading-relaxed">
+                <li><strong>미작성/미교부 처벌:</strong> 위반 시 사업주에게 <span className="text-rose-600 font-bold">500만 원 이하 벌금</span>.</li>
+                <li><strong>필수 기재사항:</strong> 임금, 근로시간, 주휴일, 연차휴가, 근무장소 및 업무내용.</li>
+              </ul>
+            </div>
+          )
+        };
+
+      case "04_wage":
       case "wage":
         return {
-          title: "04. 최저임금 및 임금지급 4대 원칙",
+          title: "04. 최저임금 (성인과 동일 적용)",
           actions: [
-            { label: "🧮 2026 최저시급으로 주급 계산", key: "open_calc" },
-            { label: "🎁 주휴수당 조건 및 계산", key: "weekly_holiday" },
-            { label: "➕ 가산수당(야간/연장/휴일)", key: "allowance" }
+            { label: "🧮 2026 최저시급 급여 계산기", key: "open_calc" },
+            { label: "🎁 08. 주휴수당 조건 보기", key: "08_holiday" }
           ],
           content: (
             <div className="space-y-2 text-xs sm:text-sm text-slate-700">
               <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-3 rounded-xl shadow-xs">
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-[11px] bg-white/20 px-2 py-0.5 rounded-full font-bold">2026년 고용노동부 고시</span>
-                  <span className="text-[11px] text-blue-100">전 사업장 동일 적용</span>
+                  <span className="text-[11px] bg-white/20 px-2 py-0.5 rounded-full font-bold">📌 십계명 4항 (2026년 최저임금)</span>
+                  <span className="text-[11px] text-blue-100">전 사업장 동일</span>
                 </div>
                 <div className="flex items-baseline gap-1.5 mt-0.5">
                   <span className="text-xl font-black">시급 10,320원</span>
-                  <span className="text-xs text-blue-100">(월 환산 2,156,880원 / 209h 기준)</span>
+                  <span className="text-xs text-blue-100">(월 2,156,880원 / 209h)</span>
                 </div>
-                <p className="text-[11px] text-blue-200 mt-1">* 2025년 최저임금: 10,030원 | 2024년 최저임금: 9,860원</p>
+                <p className="text-[11px] text-blue-200 mt-1">* 2025년 최저임금: 10,030원 | 청소년도 성인과 동일 시급 적용!</p>
               </div>
 
-              <div className="bg-emerald-50 p-2.5 rounded-lg border border-emerald-200 flex items-center justify-between">
-                <div>
-                  <span className="text-emerald-900 font-bold block">1명 이상 모든 사업장 필수 적용</span>
-                  <span className="text-[11px] text-emerald-700">최저임금 미만 지급 시 3년 이하 징역 또는 2천만원 이하 벌금</span>
-                </div>
-                <button 
-                  onClick={() => setIsCalcOpen(true)}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-2.5 py-1.5 rounded-lg font-bold shadow-sm shrink-0 transition cursor-pointer"
-                >
-                  급여 계산기
-                </button>
-              </div>
-              
               <div className="bg-amber-50 p-2.5 rounded-lg text-amber-900 border-l-4 border-amber-400">
-                <strong>⚠️ 수습기간 감액(90%) 불가 직종:</strong><br />
-                패스트푸드, 편의점, 배달원, 청소원, 주방보조 등 <u>단순노무직종</u>은 1년 이상 계약하더라도 수습 감액 없이 <strong>최저임금 100%(10,320원) 전액 지급</strong>해야 합니다.
-              </div>
-
-              <div className="space-y-1">
-                <strong className="text-slate-800 block">💡 임금 지급의 4대 원칙</strong>
-                <div className="grid grid-cols-2 gap-1.5 text-xs">
-                  <div className="bg-slate-100 p-1.5 rounded"><strong>1. 직접불:</strong> 본인에게 직접</div>
-                  <div className="bg-slate-100 p-1.5 rounded"><strong>2. 통화불:</strong> 현금/통장 화폐로</div>
-                  <div className="bg-slate-100 p-1.5 rounded"><strong>3. 전액불:</strong> 공제없이 전액</div>
-                  <div className="bg-slate-100 p-1.5 rounded"><strong>4. 정기불:</strong> 월 1회 정해진 날</div>
-                </div>
-              </div>
-
-              <div className="bg-blue-50 p-2.5 rounded-lg text-blue-900">
-                <strong>📄 임금명세서 교부 의무:</strong><br />
-                임금 지급 시 계산방법, 구성항목, 공제내역이 적힌 서면(또는 전자문서)을 의무 교부해야 합니다.
+                <strong>⚠️ 단순노무직종 수습 감액(90%) 불가:</strong><br />
+                편의점, 패스트푸드, 배달, 주방보조 등은 수습 감액 없이 <strong>최저임금 100%(10,320원) 전액 지급</strong>해야 합니다.
               </div>
             </div>
           )
         };
-      case "weekly_holiday":
+
+      case "05_forbidden":
+      case "forbidden_jobs":
         return {
-          title: "05. 주휴수당 (유급휴일)",
+          title: "05. 위험한 일 및 유해 업종 취업 금지",
           actions: [
-            { label: "🧮 주휴수당 직접 계산해보기", key: "open_calc" },
-            { label: "⏰ 근로시간/휴게시간 규정", key: "hours" }
+            { label: "⏰ 06. 근로시간 및 휴게시간", key: "06_hours" },
+            { label: "🛡️ 10. 1:1 권익 상담받기", key: "10_counseling" }
           ],
           content: (
             <div className="space-y-2 text-xs sm:text-sm text-slate-700">
-              <div className="bg-blue-50 p-2.5 rounded-lg border-l-4 border-blue-500">
-                <p className="font-bold text-blue-950">주휴수당 지급 요건 2가지</p>
-                <p className="text-blue-800 mt-0.5">① 1주 소정근로시간이 <strong>15시간 이상</strong>일 것<br />② 약속된 소정근로일을 <strong>모두 출근(개근)</strong>할 것</p>
+              <div className="bg-rose-50 p-2.5 rounded-lg text-rose-900 border-l-4 border-rose-400">
+                <strong>📌 십계명 5항 (유해업소 취업 금지):</strong><br />
+                청소년은 위험한 일이나 도덕상/보건상 유해한 업종에서 일할 수 없습니다.
               </div>
-
-              <div className="bg-slate-100 p-2.5 rounded-lg">
-                <span className="font-bold text-slate-800 block mb-1">🧮 기본 계산 공식</span>
-                <code className="block bg-white p-2 rounded border border-slate-300 text-blue-700 font-bold text-center">
-                  (1주 소정근로시간 ÷ 40시간) × 8시간 × 시급
-                </code>
-                <p className="text-xs text-slate-600 mt-1.5">
-                  * <strong>2026년 기준 예시:</strong> 주 20시간 일하고 최저시급 10,320원인 경우<br />
-                  (20 ÷ 40) × 8 × 10,320원 = <strong>41,280원 주휴수당 추가 지급!</strong><br />
-                  👉 기본주급(206,400원) + 주휴수당(41,280원) = <strong>총 247,680원</strong>
-                </p>
+              <div className="bg-slate-100 p-2.5 rounded-lg text-slate-700 space-y-1 text-xs">
+                <strong>🚫 주요 취업 금지 업종:</strong>
+                <p>· 유흥주점, 단란주점, 비디오방, 성인용품점</p>
+                <p>· 노래연습장(유흥접객), PC방(밤 10시 이후), 숙박업, 안마시술소 등</p>
               </div>
             </div>
           )
         };
-      case "allowance":
-        return {
-          title: "06-07. 가산수당 및 휴업수당 (5인 이상)",
-          actions: [
-            { label: "⏰ 청소년 근로시간 한도", key: "hours" },
-            { label: "🛡️ 권익센터 1:1 상담", key: "counseling" }
-          ],
-          content: (
-            <div className="space-y-2 text-xs sm:text-sm text-slate-700">
-              <div className="border border-slate-200 rounded-xl overflow-hidden shadow-xs">
-                <div className="bg-purple-700 text-white font-bold p-2 text-center text-xs">
-                  상시근로자 5인 이상 사업장 가산수당
-                </div>
-                <div className="p-2 space-y-1.5 bg-purple-50/50">
-                  <div className="flex justify-between items-center py-1 border-b border-purple-100">
-                    <span className="font-bold text-slate-800">🌙 야간근로 (22:00 ~ 06:00)</span>
-                    <span className="text-purple-700 font-bold">+50% 가산</span>
-                  </div>
-                  <div className="flex justify-between items-center py-1 border-b border-purple-100">
-                    <span className="font-bold text-slate-800">⏱️ 연장근로 (약속시간 초과)</span>
-                    <span className="text-purple-700 font-bold">+50% 가산</span>
-                  </div>
-                  <div className="flex justify-between items-center py-1">
-                    <span className="font-bold text-slate-800">🎌 휴일근로 (주휴일/공휴일)</span>
-                    <span className="text-purple-700 font-bold text-right">8시간내 +50%<br />8시간초과 +100%</span>
-                  </div>
-                </div>
-              </div>
 
-              <div className="bg-amber-50 p-2.5 rounded-lg text-amber-900">
-                <strong>🏢 휴업수당 (5인 이상):</strong><br />
-                가게 사정이나 사용자의 귀책사유로 쉬게 할 경우, 휴업기간 동안 <strong>평균임금의 70% 이상</strong>을 지급해야 합니다.
-              </div>
-            </div>
-          )
-        };
+      case "06_hours":
       case "hours":
         return {
-          title: "08. 근로시간 및 휴게시간",
+          title: "06. 근로시간 및 휴게시간 규정",
           actions: [
-            { label: "🌴 휴일 및 연차유급휴가", key: "holidays" },
-            { label: "💰 가산수당 기준 보기", key: "allowance" }
+            { label: "🌙 07. 가산수당 조건 보기", key: "07_allowance" },
+            { label: "🎁 08. 주휴수당 조건 보기", key: "08_holiday" }
           ],
           content: (
             <div className="space-y-2 text-xs sm:text-sm text-slate-700">
               <div className="bg-blue-50 p-2.5 rounded-lg border-l-4 border-blue-500">
-                <strong className="text-blue-900 block mb-1">👶 18세 미만 청소년 법정 근로시간</strong>
+                <strong className="text-blue-900 block mb-1">📌 십계명 6항 (청소년 근로시간)</strong>
                 <div className="flex justify-between text-blue-800">
-                  <span>· 1일 법정근로시간: <strong>7시간 이내</strong></span>
-                  <span>· 1주일: <strong>35시간 이내</strong></span>
+                  <span>· 1일 근로시간: <strong>7시간 이내</strong></span>
+                  <span>· 1주일 근로시간: <strong>35시간 이내</strong></span>
                 </div>
                 <p className="text-xs text-blue-700 mt-1">
-                  * 연장근로는 당사자 합의 시 <strong>1일 1시간, 1주 5시간</strong>까지만 가능!
+                  * 연장근로는 당사자 합의 시 1일 1시간, 1주 5시간까지만 가능!
                 </p>
               </div>
 
               <div className="bg-emerald-50 p-2.5 rounded-lg border-l-4 border-emerald-500">
-                <strong className="text-emerald-900 block mb-1">☕ 꼭 챙겨야 하는 휴게시간</strong>
-                <ul className="list-disc list-inside text-emerald-800 space-y-0.5 text-xs">
-                  <li><strong>4시간 근무 시:</strong> 30분 이상 보장</li>
-                  <li><strong>8시간 근무 시:</strong> 1시간 이상 보장</li>
-                </ul>
-                <p className="text-xs text-emerald-700 mt-1">
-                  ⚠️ 사장님 지휘·명령 아래 손님을 기다리는 <u>대기시간은 휴게시간이 아니라 &apos;근로시간&apos;</u>에 해당합니다!
-                </p>
-              </div>
-            </div>
-          )
-        };
-      case "holidays":
-        return {
-          title: "09. 휴일 및 휴가 규정",
-          actions: [
-            { label: "🎁 주휴수당 조건 보기", key: "weekly_holiday" },
-            { label: "🚪 권익보호/구제 보기", key: "rights_protect" }
-          ],
-          content: (
-            <div className="space-y-2 text-xs sm:text-sm text-slate-700">
-              <div className="bg-slate-100 p-2.5 rounded-lg">
-                <strong className="text-slate-800 block mb-1">⭐ 법에서 정한 유급휴일</strong>
-                <p className="text-slate-600">
-                  · <strong>주휴일</strong> (1주 개근 시 1일 유급)<br />
-                  · <strong>근로자의 날</strong> (매년 5월 1일)<br />
-                  · <strong>관공서 공휴일 및 대체공휴일</strong> (5인 이상 사업장 적용)
-                </p>
-              </div>
-              <div className="bg-blue-50 p-2.5 rounded-lg text-blue-900">
-                <strong>🏖️ 연차유급휴가 (5인 이상):</strong><br />
-                1년 미만 근로자는 1개월 개근 시 1일의 유급휴가가 발생하며, 1년간 80% 이상 출근 시 15일의 유급휴가가 부여됩니다.
-              </div>
-            </div>
-          )
-        };
-      case "rights_protect":
-        return {
-          title: "10~14. 권리구제 (해고·산재·괴롭힘·퇴직금)",
-          actions: [
-            { label: "📞 청소년 권익센터에 신고/상담", key: "counseling" },
-            { label: "🏢 접수 기관 목록 확인", key: "org_list" }
-          ],
-          content: (
-            <div className="space-y-2 text-xs sm:text-sm text-slate-700">
-              <div className="bg-rose-50 p-2.5 rounded-lg border-l-4 border-rose-400">
-                <strong className="text-rose-900 block">🛑 직장 내 성희롱·괴롭힘 금지</strong>
-                <p className="text-xs text-rose-800">
-                  직장 내 지위 우위를 이용해 업무상 적정 범위를 넘어 신체적/정신적 고통을 주거나 성적 굴욕감을 주는 행위는 법으로 엄격히 금지됩니다.
-                </p>
-              </div>
-              <div className="bg-emerald-50 p-2.5 rounded-lg border-l-4 border-emerald-400">
-                <strong className="text-emerald-900 block">🏥 산업재해 (산재보험)</strong>
+                <strong className="text-emerald-900 block mb-1">☕ 휴게시간 필수 보장</strong>
                 <p className="text-xs text-emerald-800">
-                  일하다 다치면 알바생도 <strong>100% 산재 처리</strong> 가능! (치료비 요양급여, 일 못한 기간 휴업급여 등 보상)<br />
-                  * 문의: 근로복지공단 (1588-0075)
-                </p>
-              </div>
-              <div className="bg-amber-50 p-2.5 rounded-lg border-l-4 border-amber-400">
-                <strong className="text-amber-900 block">🚪 해고 및 해고예고수당</strong>
-                <p className="text-xs text-amber-800">
-                  해고는 <strong>정당한 이유 + 서면 통보 + 30일 전 예고</strong>가 원칙!<br />
-                  * 30일 전 예고 없이 해고 시: <span className="font-bold">30일분 통상임금(해고예고수당)</span> 청구 가능 (3개월 이상 근무 시)
-                </p>
-              </div>
-              <div className="bg-blue-50 p-2.5 rounded-lg border-l-4 border-blue-400">
-                <strong className="text-blue-900 block">💰 퇴직금 및 금품 청산</strong>
-                <p className="text-xs text-blue-800">
-                  1주 15시간 이상 + 1년 이상 일했다면 알바도 퇴직금 지급 대상! (퇴직 후 14일 이내 지급 원칙)
+                  · 4시간 일하면 <strong>30분 이상</strong>, 8시간 일하면 <strong>1시간 이상</strong> 휴게시간을 주어야 합니다. (대기시간은 근무시간에 포함!)
                 </p>
               </div>
             </div>
           )
         };
-      case "org_list":
+
+      case "07_allowance":
+      case "allowance":
         return {
-          title: "신고 및 민원 접수 기관",
+          title: "07. 가산수당 (5인 이상 사업장)",
           actions: [
-            { label: "📞 청소년 무료 1:1 상담", key: "counseling" },
-            { label: "🏠 처음 메뉴로 이동", key: "welcome" }
+            { label: "🎁 08. 주휴수당 조건 보기", key: "08_holiday" },
+            { label: "🏥 09. 산재보상 처리 보기", key: "09_injury" }
           ],
           content: (
             <div className="space-y-2 text-xs sm:text-sm text-slate-700">
-              <div className="bg-slate-100 p-2 rounded-lg flex items-start gap-2">
-                <Building2 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-                <div>
-                  <strong className="text-slate-900">고용노동부 지청 (진정서 제출)</strong>
-                  <p className="text-xs text-slate-500">임금체불, 주휴수당 미지급, 근로계약서 미작성</p>
-                </div>
+              <div className="bg-purple-50 p-2.5 rounded-lg border-l-4 border-purple-500">
+                <strong className="text-purple-950 block mb-1">📌 십계명 7항 (가산 임금 +50%)</strong>
+                <p className="text-purple-900">
+                  상시 근로자 5명 이상 사업장에서 <strong>휴일 근무나 야간/연장 초과 근무 시 50%의 가산 임금</strong>을 받을 수 있습니다.
+                </p>
               </div>
-              <div className="bg-slate-100 p-2 rounded-lg flex items-start gap-2">
-                <Building2 className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                <div>
-                  <strong className="text-slate-900">노동위원회 (부당해고 구제신청)</strong>
-                  <p className="text-xs text-slate-500">억울한 해고 및 부당 징계 (5인 이상 사업장)</p>
-                </div>
-              </div>
-              <div className="bg-slate-100 p-2 rounded-lg flex items-start gap-2">
-                <Building2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <div>
-                  <strong className="text-slate-900">근로복지공단 (산재보상 신청)</strong>
-                  <p className="text-xs text-slate-500">업무상 부상, 질병, 출퇴근 중 사고 치료비</p>
-                </div>
-              </div>
-              <div className="bg-slate-100 p-2 rounded-lg flex items-start gap-2">
-                <Building2 className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
-                <div>
-                  <strong className="text-slate-900">국가인권위원회 (진정서 제출)</strong>
-                  <p className="text-xs text-slate-500">나이, 성별, 신분 등에 따른 차별 및 인권침해</p>
-                </div>
+              <div className="bg-slate-100 p-2 text-xs space-y-1 rounded-lg">
+                <p>🌙 야간근로 (밤 10시 ~ 아침 6시): +50% 가산</p>
+                <p>⏱️ 연장근로 (약속시간 초과): +50% 가산</p>
               </div>
             </div>
           )
         };
+
+      case "08_holiday":
+      case "weekly_holiday":
+        return {
+          title: "08. 주휴수당 (유급휴일)",
+          actions: [
+            { label: "🧮 주휴수당 직접 계산해보기", key: "open_calc" },
+            { label: "🏥 09. 산재보상 처리 보기", key: "09_injury" }
+          ],
+          content: (
+            <div className="space-y-2 text-xs sm:text-sm text-slate-700">
+              <div className="bg-emerald-50 p-2.5 rounded-lg border-l-4 border-emerald-500">
+                <strong className="text-emerald-950 block mb-1">📌 십계명 8항 (하루 유급휴일)</strong>
+                <p className="text-emerald-900">
+                  1주일 <strong>15시간 이상</strong> 일하고 약속된 날에 <strong>개근</strong>한 경우 하루의 유급휴일(주휴수당)을 지급받습니다.
+                </p>
+              </div>
+              <div className="bg-slate-100 p-2 rounded-lg text-xs font-mono text-center text-blue-800">
+                공식: (주 소정근로시간 ÷ 40시간) × 8시간 × 시급
+              </div>
+            </div>
+          )
+        };
+
+      case "09_injury":
+        return {
+          title: "09. 산업재해 (산재보상)",
+          actions: [
+            { label: "📞 10. 1:1 상담 및 신고 연결", key: "10_counseling" },
+            { label: "📜 알바 십계명 전체보기", key: "ten_commandments" }
+          ],
+          content: (
+            <div className="space-y-2 text-xs sm:text-sm text-slate-700">
+              <div className="bg-emerald-50 p-2.5 rounded-lg border-l-4 border-emerald-500">
+                <strong className="text-emerald-950 block mb-1">📌 십계명 9항 (산재보상 처리)</strong>
+                <p className="text-emerald-900">
+                  일하다 다쳤다면 <strong>산업재해보상보험법 및 근로기준법에 따라 100% 치료와 보상</strong>을 받을 수 있습니다. (알바생도 산재보험 적용 대상!)
+                </p>
+              </div>
+            </div>
+          )
+        };
+
+      case "10_counseling":
       case "counseling":
         return {
-          title: "청소년근로권익센터 1:1 무료 상담",
+          title: "10. 상담 및 권리구제 (1:1 노무사 무료상담)",
           actions: [
-            { label: "📞 바로 전화 연결하기", key: "call_center" },
-            { label: "🧮 알바비 계산기 열기", key: "open_calc" }
+            { label: "📞 1644-3119 전화 연결", key: "call_center" },
+            { label: "📜 알바 십계명 처음으로", key: "ten_commandments" }
           ],
           content: (
             <div className="space-y-2.5 text-xs sm:text-sm text-slate-700">
-              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-3 rounded-xl shadow-sm">
-                <p className="font-bold text-sm mb-1">🤝 청소년근로권익센터 ONE-STOP 서비스</p>
-                <p className="text-xs text-blue-100 leading-relaxed">
-                  노동 상담부터 권리구제(노무사 무료 대리)까지 전 과정을 든든하게 도와드립니다!
+              <div className="bg-amber-50 p-2.5 rounded-lg border-l-4 border-amber-500">
+                <strong className="text-amber-950 block mb-1">📌 십계명 10항 (상담 및 신문)</strong>
+                <p className="text-amber-900">
+                  부당한 처우를 당하거나 궁금한 사항이 있을 때는 공인노무사의 무료 1:1 상담을 받으실 수 있습니다.
                 </p>
               </div>
 
-              <div className="bg-slate-100 p-2.5 rounded-xl space-y-1.5 text-slate-700">
+              <div className="bg-slate-100 p-2.5 rounded-xl space-y-1.5 text-slate-700 text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="font-bold">☎️ 전화 상담</span>
+                  <span className="font-bold">☎️ 청소년근로권익센터</span>
                   <span className="font-bold text-blue-700">1644-3119</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span>⏰ 운영 시간</span>
-                  <span className="text-slate-600">평일 09:00 ~ 18:00</span>
+                  <span>📱 청소년 모바일 문자상담</span>
+                  <span className="font-bold text-slate-800">#1388</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span>💬 카카오톡 상담</span>
-                  <span className="text-amber-600 font-semibold">카톡 플러스친구 지원</span>
+                  <span>📞 청소년 전화 상담</span>
+                  <span className="font-bold text-slate-800">02-6335-1388 / 02-6677-1429</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span>🏫 찾아가는 노동인권교육</span>
-                  <span className="text-slate-600">02-6293-6110</span>
+                  <span>🏢 고용노동부 체불신고</span>
+                  <span className="font-bold text-slate-800">국번없이 1350</span>
                 </div>
               </div>
             </div>
           )
         };
+
       default:
         return null;
     }
@@ -588,7 +641,27 @@ export default function LaborRightsChatbot() {
       return;
     }
     if (key === "open_contract_img") {
-      setIsContractImgOpen(true);
+      setModalImage({
+        title: "연소근로자(18세 미만) 표준근로계약서 서식",
+        src: "/labor-contract.png",
+        downloadName: "연소근로자_표준근로계약서.png"
+      });
+      return;
+    }
+    if (key === "open_ten_img") {
+      setModalImage({
+        title: "청소년 알바 십계명 인포그래픽",
+        src: "/youth-ten-commandments.png",
+        downloadName: "청소년_알바_십계명.png"
+      });
+      return;
+    }
+    if (key === "open_8_img") {
+      setModalImage({
+        title: "중3이 꼭 알아야 할 최소한의 근로조건 8",
+        src: "/labor-conditions-8.png",
+        downloadName: "중3_최소한의_근로조건_8.png"
+      });
       return;
     }
     if (key === "welcome") {
@@ -599,12 +672,13 @@ export default function LaborRightsChatbot() {
     let queryKey = key;
     if (key.startsWith("quick_")) {
       const mapping: Record<string, string> = {
-        quick_contract: "contract",
-        quick_wage: "wage",
-        quick_hours: "hours",
-        quick_allowance: "allowance",
-        quick_rights: "rights_protect",
-        quick_counseling: "counseling"
+        quick_commandments: "ten_commandments",
+        quick_conditions8: "conditions_8",
+        quick_contract: "03_contract",
+        quick_wage: "04_wage",
+        quick_hours: "06_hours",
+        quick_allowance: "07_allowance",
+        quick_rights: "10_counseling"
       };
       queryKey = mapping[key] || key;
     }
@@ -627,24 +701,30 @@ export default function LaborRightsChatbot() {
     const lower = text.toLowerCase();
     let matchedKey: string | null = null;
 
-    if (lower.includes("계약서") || lower.includes("근로계약") || lower.includes("작성") || lower.includes("벌금") || lower.includes("양식") || lower.includes("서식")) {
-      matchedKey = "contract";
-    } else if (lower.includes("나이") || lower.includes("연령") || lower.includes("몇살") || lower.includes("부모님동의") || lower.includes("인허증") || lower.includes("유흥") || lower.includes("노래방") || lower.includes("장소")) {
-      matchedKey = "age_places";
-    } else if (lower.includes("최저") || lower.includes("시급") || lower.includes("수습") || lower.includes("단순노무") || lower.includes("명세서") || lower.includes("임금")) {
-      matchedKey = "wage";
+    if (lower.includes("십계명") || lower.includes("10개") || lower.includes("규칙")) {
+      matchedKey = "ten_commandments";
+    } else if (lower.includes("중3") || lower.includes("근로조건") || lower.includes("8가지") || lower.includes("최소한")) {
+      matchedKey = "conditions_8";
+    } else if (lower.includes("나이") || lower.includes("연령") || lower.includes("몇살") || lower.includes("15세")) {
+      matchedKey = "01_age";
+    } else if (lower.includes("서류") || lower.includes("부모님") || lower.includes("동의서") || lower.includes("가족관계")) {
+      matchedKey = "02_docs";
+    } else if (lower.includes("계약서") || lower.includes("근로계약") || lower.includes("교부") || lower.includes("양식")) {
+      matchedKey = "03_contract";
+    } else if (lower.includes("최저") || lower.includes("시급") || lower.includes("임금") || lower.includes("10320")) {
+      matchedKey = "04_wage";
+    } else if (lower.includes("유해") || lower.includes("위험") || lower.includes("노래방") || lower.includes("pc방")) {
+      matchedKey = "05_forbidden";
+    } else if (lower.includes("근로시간") || lower.includes("시간") || lower.includes("휴게") || lower.includes("35시간")) {
+      matchedKey = "06_hours";
+    } else if (lower.includes("야간") || lower.includes("연장") || lower.includes("가산")) {
+      matchedKey = "07_allowance";
     } else if (lower.includes("주휴") || lower.includes("유급휴일") || lower.includes("개근") || lower.includes("15시간")) {
-      matchedKey = "weekly_holiday";
-    } else if (lower.includes("야간") || lower.includes("연장") || lower.includes("가산") || lower.includes("휴업") || lower.includes("초과")) {
-      matchedKey = "allowance";
-    } else if (lower.includes("근로시간") || lower.includes("시간") || lower.includes("휴게") || lower.includes("쉬는시간") || lower.includes("대기")) {
-      matchedKey = "hours";
-    } else if (lower.includes("휴가") || lower.includes("연차") || lower.includes("빨간날") || lower.includes("노동절") || lower.includes("근로자의날")) {
-      matchedKey = "holidays";
-    } else if (lower.includes("해고") || lower.includes("잘림") || lower.includes("산재") || lower.includes("다쳤") || lower.includes("괴롭힘") || lower.includes("성희롱") || lower.includes("퇴직금")) {
-      matchedKey = "rights_protect";
-    } else if (lower.includes("상담") || lower.includes("신고") || lower.includes("전화") || lower.includes("도움") || lower.includes("노무사") || lower.includes("센터") || lower.includes("번호")) {
-      matchedKey = "counseling";
+      matchedKey = "08_holiday";
+    } else if (lower.includes("산재") || lower.includes("다쳤") || lower.includes("치료") || lower.includes("병원")) {
+      matchedKey = "09_injury";
+    } else if (lower.includes("상담") || lower.includes("신고") || lower.includes("전화") || lower.includes("노무사") || lower.includes("1388")) {
+      matchedKey = "10_counseling";
     } else if (lower.includes("계산")) {
       setIsCalcOpen(true);
       return;
@@ -660,22 +740,22 @@ export default function LaborRightsChatbot() {
 
     // Fallback response with topic buttons
     appendBotMsg({
-      title: "궁금하신 항목을 선택해주세요!",
+      title: "궁금하신 알바 십계명 항목을 선택해주세요!",
       icon: "help",
       content: (
         <div>
           <p className="text-xs text-slate-600 mb-2">
-            &quot;<strong>{text}</strong>&quot; 관련 내용을 가이드에서 찾아보실 수 있도록 주요 메뉴를 안내해 드립니다.
+            &quot;<strong>{text}</strong>&quot; 관련 주요 항목을 알바 십계명에서 선택해보세요!
           </p>
           <div className="grid grid-cols-2 gap-1.5 text-xs">
-            <button onClick={() => handleUserSelect("contract")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">📄 01. 근로계약서</button>
-            <button onClick={() => handleUserSelect("age_places")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">🪪 02. 연령 및 장소</button>
-            <button onClick={() => handleUserSelect("wage")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">💵 04. 최저임금 원칙</button>
-            <button onClick={() => handleUserSelect("weekly_holiday")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">🎁 05. 주휴수당</button>
-            <button onClick={() => handleUserSelect("allowance")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">🌙 06. 가산수당</button>
-            <button onClick={() => handleUserSelect("hours")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">⏰ 08. 근로·휴게시간</button>
-            <button onClick={() => handleUserSelect("rights_protect")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">🛡️ 10-13. 권리보호</button>
-            <button onClick={() => handleUserSelect("counseling")} className="bg-amber-100 hover:bg-amber-200 text-left p-2 rounded-lg font-bold text-amber-900 cursor-pointer">☎️ 1:1 권익상담</button>
+            <button onClick={() => handleUserSelect("ten_commandments")} className="col-span-2 bg-amber-100 hover:bg-amber-200 text-left p-2 rounded-lg font-bold text-amber-950 cursor-pointer">📜 십계명 포스터 전체보기</button>
+            <button onClick={() => handleUserSelect("01_age")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">01. 연령 조건</button>
+            <button onClick={() => handleUserSelect("02_docs")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">02. 필수 서류</button>
+            <button onClick={() => handleUserSelect("03_contract")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">03. 근로계약서</button>
+            <button onClick={() => handleUserSelect("04_wage")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">04. 최저임금</button>
+            <button onClick={() => handleUserSelect("06_hours")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">06. 근로시간</button>
+            <button onClick={() => handleUserSelect("08_holiday")} className="bg-slate-100 hover:bg-slate-200 text-left p-2 rounded-lg font-medium text-slate-800 cursor-pointer">08. 주휴수당</button>
+            <button onClick={() => handleUserSelect("10_counseling")} className="bg-amber-50 hover:bg-amber-100 text-left p-2 rounded-lg font-bold text-amber-900 cursor-pointer">10. 1:1 상담구제</button>
           </div>
         </div>
       )
@@ -697,8 +777,8 @@ export default function LaborRightsChatbot() {
       title: "🧮 청소년 알바비 & 주휴수당 모의계산",
       icon: "calculator",
       actions: [
-        { label: "🎁 주휴수당 상세규정", key: "weekly_holiday" },
-        { label: "📞 공인노무사 상담받기", key: "counseling" }
+        { label: "🎁 08. 주휴수당 상세규정", key: "08_holiday" },
+        { label: "📞 10. 공인노무사 상담받기", key: "10_counseling" }
       ],
       content: (
         <div className="space-y-1.5 text-xs">
@@ -739,48 +819,57 @@ export default function LaborRightsChatbot() {
   return (
     <div className="py-4 px-2 sm:px-4 flex justify-center items-center min-h-[calc(100vh-4rem)] bg-slate-900/90 font-sans selection:bg-amber-300">
       
-      {/* Mobile Chat Wrapper (HTML 원안 디자인 복원) */}
+      {/* Mobile Chat Wrapper (HTML 원안 디자인) */}
       <div className="w-full max-w-md h-[100dvh] sm:h-[90vh] sm:max-h-[860px] bg-slate-100 flex flex-col sm:rounded-3xl shadow-2xl overflow-hidden border border-slate-700/30 relative">
         
         {/* Top Header Bar */}
         <header className="bg-white/95 backdrop-blur-md px-4 py-3 border-b border-slate-200 flex items-center justify-between z-20 shrink-0 shadow-xs">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
+            {/* 상단 홈 버튼 (홈페이지로 이동) */}
+            <button
+              onClick={handleGoHome}
+              className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 hover:bg-amber-100 text-slate-700 hover:text-slate-900 border border-slate-300 transition cursor-pointer shrink-0"
+              title="홈페이지로 돌아가기"
+            >
+              <Home className="w-4 h-4" />
+            </button>
+
             <div className="relative">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-amber-400 p-[2px] shadow-sm">
-                <div className="w-full h-full bg-white rounded-full flex items-center justify-center text-blue-600 text-lg font-black">
-                  <ShieldCheck className="w-5 h-5 text-blue-600" />
+              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-amber-400 p-[2px] shadow-sm">
+                <div className="w-full h-full bg-white rounded-full flex items-center justify-center text-blue-600 text-base font-black">
+                  <ShieldCheck className="w-4 h-4 text-blue-600" />
                 </div>
               </div>
-              <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></span>
+              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full"></span>
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <h1 className="font-bold text-slate-900 text-sm">청소년 노동인권 지킴이</h1>
+                <h1 className="font-bold text-slate-900 text-xs sm:text-sm">청소년 노동인권 지킴이</h1>
                 <span className="bg-blue-100 text-blue-700 text-[10px] font-bold px-1.5 py-0.5 rounded">공인노무사회</span>
               </div>
-              <p className="text-[11px] text-slate-500 font-medium">청소년근로권익센터 1:1 맞춤 챗봇</p>
+              <p className="text-[10px] sm:text-[11px] text-slate-500 font-medium">청소년근로권익센터 1:1 맞춤 챗봇</p>
             </div>
           </div>
 
           {/* Header Action Buttons */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1">
             <button 
               onClick={() => setIsCalcOpen(true)} 
-              className="p-2 text-slate-600 hover:text-blue-600 hover:bg-slate-100 rounded-full transition text-sm cursor-pointer" 
+              className="p-1.5 text-slate-600 hover:text-blue-600 hover:bg-slate-100 rounded-full transition text-sm cursor-pointer" 
               title="주휴/알바비 계산기"
             >
               <Calculator className="w-4 h-4" />
             </button>
             <button 
               onClick={() => setIsHelpOpen(true)} 
-              className="p-2 text-rose-500 hover:bg-rose-50 rounded-full transition text-sm font-bold cursor-pointer" 
+              className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-full transition text-sm font-bold cursor-pointer" 
               title="권익센터 긴급상담"
             >
               <Phone className="w-4 h-4" />
             </button>
             <button 
               onClick={restartChat} 
-              className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-full transition text-sm cursor-pointer" 
+              className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-full transition text-sm cursor-pointer" 
               title="대화 다시 시작"
             >
               <RotateCcw className="w-4 h-4" />
@@ -865,40 +954,46 @@ export default function LaborRightsChatbot() {
         <div className="bg-white/95 backdrop-blur-md border-t border-slate-200/80 p-2 shrink-0 z-10">
           <div className="flex gap-2 overflow-x-auto pb-1.5 pt-0.5 px-1 text-xs font-semibold no-scrollbar">
             <button 
-              onClick={() => handleUserSelect("quick_contract")} 
-              className="whitespace-nowrap px-3 py-1.5 rounded-full bg-slate-100 hover:bg-amber-100 text-slate-700 hover:text-amber-900 border border-slate-200 hover:border-amber-300 transition shrink-0 flex items-center gap-1 cursor-pointer"
+              onClick={() => handleUserSelect("quick_commandments")} 
+              className="whitespace-nowrap px-3 py-1.5 rounded-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold border border-amber-500 transition shrink-0 flex items-center gap-1 cursor-pointer shadow-xs"
             >
-              📝 근로계약서
+              📜 알바 십계명 (01~10)
+            </button>
+            <button 
+              onClick={() => handleUserSelect("quick_conditions8")} 
+              className="whitespace-nowrap px-3 py-1.5 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-900 border border-blue-300 transition shrink-0 flex items-center gap-1 cursor-pointer font-bold"
+            >
+              📘 근로조건 8 인포그래픽
+            </button>
+            <button 
+              onClick={() => handleUserSelect("quick_contract")} 
+              className="whitespace-nowrap px-3 py-1.5 rounded-full bg-slate-100 hover:bg-amber-100 text-slate-700 hover:text-amber-900 border border-slate-200 transition shrink-0 flex items-center gap-1 cursor-pointer"
+            >
+              📝 03. 근로계약서
             </button>
             <button 
               onClick={() => handleUserSelect("quick_wage")} 
-              className="whitespace-nowrap px-3 py-1.5 rounded-full bg-slate-100 hover:bg-blue-100 text-slate-700 hover:text-blue-900 border border-slate-200 hover:border-blue-300 transition shrink-0 flex items-center gap-1 cursor-pointer"
+              className="whitespace-nowrap px-3 py-1.5 rounded-full bg-slate-100 hover:bg-blue-100 text-slate-700 hover:text-blue-900 border border-slate-200 transition shrink-0 flex items-center gap-1 cursor-pointer"
             >
-              💰 최저임금·주휴수당
+              💰 04. 최저임금
             </button>
             <button 
               onClick={() => handleUserSelect("quick_hours")} 
-              className="whitespace-nowrap px-3 py-1.5 rounded-full bg-slate-100 hover:bg-emerald-100 text-slate-700 hover:text-emerald-900 border border-slate-200 hover:border-emerald-300 transition shrink-0 flex items-center gap-1 cursor-pointer"
+              className="whitespace-nowrap px-3 py-1.5 rounded-full bg-slate-100 hover:bg-emerald-100 text-slate-700 hover:text-emerald-900 border border-slate-200 transition shrink-0 flex items-center gap-1 cursor-pointer"
             >
-              ⏰ 근로·휴게시간
+              ⏰ 06. 근로시간
             </button>
             <button 
               onClick={() => handleUserSelect("quick_allowance")} 
-              className="whitespace-nowrap px-3 py-1.5 rounded-full bg-slate-100 hover:bg-purple-100 text-slate-700 hover:text-purple-900 border border-slate-200 hover:border-purple-300 transition shrink-0 flex items-center gap-1 cursor-pointer"
+              className="whitespace-nowrap px-3 py-1.5 rounded-full bg-slate-100 hover:bg-purple-100 text-slate-700 hover:text-purple-900 border border-slate-200 transition shrink-0 flex items-center gap-1 cursor-pointer"
             >
-              ➕ 야간/연장 가산수당
+              ➕ 07. 가산수당
             </button>
             <button 
               onClick={() => handleUserSelect("quick_rights")} 
-              className="whitespace-nowrap px-3 py-1.5 rounded-full bg-slate-100 hover:bg-rose-100 text-slate-700 hover:text-rose-900 border border-slate-200 hover:border-rose-300 transition shrink-0 flex items-center gap-1 cursor-pointer"
-            >
-              🛡️ 해고·산재·괴롭힘
-            </button>
-            <button 
-              onClick={() => handleUserSelect("quick_counseling")} 
               className="whitespace-nowrap px-3 py-1.5 rounded-full bg-amber-500 hover:bg-amber-600 text-white font-bold transition shrink-0 flex items-center gap-1 shadow-xs cursor-pointer"
             >
-              📞 1:1 권익상담
+              📞 10. 1:1 권익상담
             </button>
           </div>
 
@@ -909,7 +1004,7 @@ export default function LaborRightsChatbot() {
                 type="text" 
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder="궁금한 내용을 질문해보세요 (예: 주휴수당, 해고, 야간)" 
+                placeholder="궁금한 내용을 질문해보세요 (예: 십계명, 최저임금, 근로시간)" 
                 className="w-full bg-slate-100 border border-slate-300 focus:border-blue-500 focus:bg-white focus:outline-none text-xs sm:text-sm rounded-full py-2.5 pl-4 pr-9 transition text-slate-800 placeholder-slate-400 font-medium"
                 onKeyDown={(e) => e.key === "Enter" && handleSendTextMessage()}
               />
@@ -925,25 +1020,25 @@ export default function LaborRightsChatbot() {
 
       </div>
 
-      {/* Contract Image Full Modal */}
-      {isContractImgOpen && (
+      {/* Universal Image Full Viewer Modal */}
+      {modalImage && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6 animate-fadeIn">
-          <div className="bg-white w-full max-w-xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+          <div className="bg-white w-full max-w-xl max-h-[92vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col">
             <div className="flex justify-between items-center px-4 py-3 border-b border-slate-200 bg-slate-50">
               <h3 className="font-bold text-slate-900 flex items-center gap-2 text-sm sm:text-base">
-                <FileText className="w-5 h-5 text-blue-600" /> 연소근로자(18세 미만) 표준근로계약서 서식
+                <FileText className="w-5 h-5 text-blue-600" /> {modalImage.title}
               </h3>
               <div className="flex items-center gap-2">
                 <a 
-                  href="/labor-contract.png" 
-                  download="연소근로자_표준근로계약서.png"
+                  href={modalImage.src} 
+                  download={modalImage.downloadName}
                   className="p-1.5 text-slate-600 hover:text-blue-600 hover:bg-slate-200 rounded-lg text-xs font-bold flex items-center gap-1 transition"
-                  title="이미지 다운로드"
+                  title="이미지 저장"
                 >
                   <Download className="w-4 h-4" /> 저장
                 </a>
                 <button 
-                  onClick={() => setIsContractImgOpen(false)} 
+                  onClick={() => setModalImage(null)} 
                   className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-200 rounded-lg transition text-base cursor-pointer"
                 >
                   <X className="w-5 h-5" />
@@ -953,18 +1048,18 @@ export default function LaborRightsChatbot() {
 
             <div className="flex-1 overflow-y-auto p-4 bg-slate-100 flex justify-center items-start">
               <img 
-                src="/labor-contract.png" 
-                alt="연소근로자(18세 미만인 자) 표준근로계약서 양식" 
+                src={modalImage.src} 
+                alt={modalImage.title} 
                 className="max-w-full h-auto rounded-lg shadow-md border border-slate-200"
               />
             </div>
 
             <div className="p-3 bg-white border-t border-slate-200 flex justify-end">
               <button 
-                onClick={() => setIsContractImgOpen(false)} 
+                onClick={() => setModalImage(null)} 
                 className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs transition cursor-pointer shadow-xs"
               >
-                확인 완료
+                닫기
               </button>
             </div>
           </div>

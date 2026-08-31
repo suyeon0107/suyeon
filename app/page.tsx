@@ -159,7 +159,7 @@ export default function HomePage() {
             {activeApp === "social-quiz" && <SocialQuizGame />}
             {activeApp === "social-picker" && <SocialPresentationPicker />}
             {activeApp === "human-rights" && <HumanRightsGuide />}
-            {activeApp === "labor-rights" && <LaborRightsChatbot />}
+            {activeApp === "labor-rights" && <LaborRightsChatbot onClose={() => setActiveApp(null)} />}
             {activeApp === "quiz" && <QuizGame />}
             {activeApp === "explore" && <ExploreApp onClose={() => setActiveApp(null)} />}
             {activeApp === "review" && <ReviewApp onClose={() => setActiveApp(null)} />}
